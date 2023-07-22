@@ -47,32 +47,34 @@ const PostForm = () => {
   }
 
   return (
-    <>
-      <Form onSubmit={onSubmit}>
+    <div className='create-post-section'>
+      <Form onSubmit={onSubmit} size='huge' className='post-form'>
         <h2>Create Post</h2>
-        <Form.Input
+        <Form.TextArea
           type='text'
           placeholder='Hi World!'
           name='body'
-          // error={errors.body}
+          error={!!errors.body}
           onChange={onChange}
           value={body}
         />
-        <Button type='submit' color='teal'>
+        <Button type='submit' color='teal' size='huge'>
           Submit
         </Button>
       </Form>
 
-      {Object.keys(errors).length > 0 && (
-        <div className='ui error message'>
-          <ul className='list'>
-            {Object.values(errors).map((error) => (
-              <li key={error}>{error}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </>
+      <div className='post-form-error'>
+        {Object.keys(errors).length > 0 && (
+          <div className='ui error message'>
+            <ul className='list'>
+              {Object.values(errors).map((error) => (
+                <li key={error}>{error}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

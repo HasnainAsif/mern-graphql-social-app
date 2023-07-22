@@ -39,45 +39,50 @@ const Register = () => {
   return (
     <div className='form-container'>
       {/* className={(loading && 'loading') ?? ''} */}
-      <Form onSubmit={onSubmit} noValidate className={loading ? 'loading' : ''}>
+      <Form
+        onSubmit={onSubmit}
+        noValidate
+        className={loading ? 'loading' : ''}
+        size='huge'
+      >
         <h1>Register</h1>
         <Form.Input
           type='text'
           label='Username'
-          placeholder='Username...'
+          placeholder='Enter Username'
           name='username'
-          error={errors.username}
+          error={!!errors.username}
           onChange={onChange}
           value={username}
         />
         <Form.Input
           type='email'
           label='Email'
-          placeholder='Email...'
+          placeholder='Enter Email'
           name='email'
-          error={errors.email}
+          error={!!errors.email}
           onChange={onChange}
           value={email}
         />
         <Form.Input
           type='password'
           label='Password'
-          placeholder='Password...'
+          placeholder='Enter Password'
           name='password'
-          error={errors.password}
+          error={!!errors.password}
           onChange={onChange}
           value={password}
         />
         <Form.Input
           type='password'
           label='Confirm Password'
-          placeholder='Confirm Password...'
+          placeholder='Enter Confirm Password'
           name='confirmPassword'
-          error={errors.confirmPassword}
+          error={!!errors.confirmPassword}
           onChange={onChange}
           value={confirmPassword}
         />
-        <Button type='submit' primary>
+        <Button type='submit' primary size='huge'>
           Register
         </Button>
       </Form>

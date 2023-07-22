@@ -26,16 +26,16 @@ const Home = () => {
 
   return (
     <>
-      <Grid columns={3}>
-        <Grid.Row centered className='page-title'>
+      <Grid columns={3} padded>
+        <Grid.Row centered>
           <h1>Recent Posts</h1>
         </Grid.Row>
+        {context.user && (
+          <Grid.Row style={{ marginBottom: '20px' }}>
+            <PostForm />
+          </Grid.Row>
+        )}
         <Grid.Row>
-          {context.user && (
-            <Grid.Column style={{ marginBottom: '20px' }}>
-              <PostForm />
-            </Grid.Column>
-          )}
           {loading ? (
             <h1>Loading...</h1>
           ) : (

@@ -15,7 +15,8 @@ import { AuthProvider } from './util/context/auth';
 import AuthLayout from './components/AuthLayout';
 import SinglePost from './pages/SinglePost';
 
-// TODO: Fragment for posts/post or like/comment
+// TODO: If token is expired, redirect to login page
+// TODO: Fragment for posts/post or like/comment -- DONE
 // TODO: add table pagination of posts
 // TODO: add load more pagination on comments
 // TODO: add Sorting (Most liked First, Most Commented First)
@@ -30,7 +31,7 @@ function App() {
         <Routes>
           <Route
             element={
-              <Container>
+              <Container className='main-container'>
                 <MenuBar />
                 <Outlet />
               </Container>
@@ -52,3 +53,7 @@ function App() {
 }
 
 export default App;
+
+// POSTS CONTENT
+// Starting to contribute in open source
+// Going to create a new repo using Graphql, ReactJs, Nodejs in Github

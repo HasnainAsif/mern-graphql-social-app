@@ -47,6 +47,10 @@ const LikeButton = ({ post: { id, likeCount, likes } = {} }) => {
           {likeCount}
         </Label>
       </Button>
+      {/* <span onClick={likeUnlikePost}>
+        <i className={`fa-${liked ? 'solid' : 'regular'} fa-heart`}></i>
+        {likeCount}
+      </span> */}
     </MyPopup>
   );
 };

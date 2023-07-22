@@ -16,26 +16,14 @@ const MenuBar = () => {
   };
 
   const menuBar = context.user ? (
-    <Menu
-      pointing
-      secondary
-      size='massive'
-      color='teal'
-      className='menu-bottom'
-    >
+    <Menu pointing secondary size='massive' color='teal' className='main-menu'>
       <Menu.Item name={context.user.username} active as={Link} to='/' />
       <Menu.Menu position='right'>
         <Menu.Item name='logout' onClick={context.logout} />
       </Menu.Menu>
     </Menu>
   ) : (
-    <Menu
-      pointing
-      secondary
-      size='massive'
-      color='teal'
-      className='menu-bottom'
-    >
+    <Menu pointing secondary size='massive' color='teal' className='main-menu'>
       <Menu.Item
         name='home'
         active={activeItem === 'home'}

@@ -1,8 +1,168 @@
-.menu-bottom {
-  margin-top: 10px;
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,700&display=swap');
+
+* {
+  padding: 0;
+  margin: 0;
 }
 
+html {
+  font-family: 'Roboto', sans-serif;
+  font-size: 12px;
+}
+
+body {
+  background: #1488cc;
+  background: -webkit-linear-gradient(to right, #2b32b2, #1488cc);
+  background: linear-gradient(to right, #2b32b2, #1488cc);
+}
+
+.main-menu {
+  margin-top: 10px;
+  font-size: 1.8rem !important;
+}
+
+/* Form Css */
 .form-container {
   width: 400px;
   margin: auto;
+}
+
+@media only screen and (min-width: 1200px) {
+  .main-container {
+    width: 1200px !important;
+  }
+}
+
+h1 {
+  margin: 0 0 1.5rem 0;
+  font-size: 3rem;
+  letter-spacing: 0.7px;
+  color: skyblue;
+}
+
+h2 {
+  margin: 0 0 1rem 0;
+  font-size: 2rem;
+  letter-spacing: 0.5px;
+  color: #333;
+}
+
+h3 {
+  margin: 0 0 0.5rem 0;
+  color: #999;
+  font-size: 1.25rem;
+}
+
+p {
+  margin: 0 0 2rem 0;
+  font-size: 1.5rem;
+  line-height: 1.45;
+  color: #333;
+  word-wrap: break-word;
+}
+
+/* Post Card Start */
+.post-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 1px 1px 2rem rgba(0, 0, 0, 0.3);
+  position: relative;
+  margin: 0 20px 10px 0;
+}
+.single-post .post-card {
+  margin-right: 0px;
+}
+
+.container_copy {
+  padding: 3rem 2rem 2rem 4rem;
+}
+
+.img_pod {
+  height: 68px;
+  width: 68px;
+  background: linear-gradient(90deg, #83e6ed, #b1e9ed);
+  z-index: 10;
+  box-shadow: 1px 1px 2rem rgba(0, 0, 0, 0.3);
+  border-radius: 1000%;
+  position: absolute;
+  left: -10%;
+  top: -13%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.single-post .post-card .img_pod {
+  left: -33px;
+}
+
+img {
+  height: 5rem;
+  width: 5rem;
+  position: relative;
+  border-radius: 100%;
+  box-shadow: 1px 1px 2rem rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-family: 'Roboto', sans-serif;
+  font-size: medium;
+  color: #3c3c3c;
+
+  padding-top: 10px;
+  border-top: 1px solid #1488cc4d;
+}
+.card-actions span {
+  padding-right: 10px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+.card-actions span i {
+  margin-right: 5px;
+}
+/* Post Card End */
+
+.comments-section h1 {
+  margin-top: 1rem;
+}
+
+.form h1 {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #1488cc;
+}
+
+.form h2 {
+  color: skyblue;
+}
+
+.form .field label {
+  font-size: 1.7rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.form .error.field label {
+  color: #ffcccc !important;
+}
+
+/* Post Form */
+.create-post-section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.post-form {
+  width: 100%;
+  max-width: 500px !important;
+  margin: auto;
+}
+.post-form-error {
+  width: 100%;
+  max-width: 500px !important;
+  margin: auto;
+  margin-top: 1rem;
 }
