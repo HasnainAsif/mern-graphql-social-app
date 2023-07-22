@@ -2,11 +2,11 @@ const gql = require('graphql-tag');
 
 const typeDefs = gql`
   type Post {
-    id: ID!
+    id: ID! # ! means non-nullable
     body: String!
     username: String!
     createdAt: String!
-    comments: [Comment]!
+    comments: [Comment]! # ! means comments  will be an array and will have zero or more items.
     likes: [Like]!
     likeCount: Int!
     commentCount: Int!
