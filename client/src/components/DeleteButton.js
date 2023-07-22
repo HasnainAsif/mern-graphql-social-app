@@ -1,7 +1,7 @@
 import { gql, useMutation } from '@apollo/client';
 import React, { Fragment, useState } from 'react';
-import { Button, Confirm, Icon, Popup } from 'semantic-ui-react';
-import { FETCH_POSTS_QUERY } from '../util/Graphql';
+import { Button, Confirm, Icon } from 'semantic-ui-react';
+import { FETCH_POSTS_QUERY } from '../util/post/Graphql';
 import MyPopup from './MyPopup';
 
 const DeleteButton = ({ postId, commentId, callback }) => {
@@ -13,7 +13,7 @@ const DeleteButton = ({ postId, commentId, callback }) => {
       setConfirmOpen(false);
 
       if (!commentId) {
-        // Run if we are deleting a post and not a comment
+        // Run if deleting a post
         const cachedPosts = proxy.readQuery({
           query: FETCH_POSTS_QUERY,
         });

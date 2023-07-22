@@ -1,14 +1,14 @@
-import { gql, useMutation } from "@apollo/client";
-import React, { useState } from "react";
-import { Button, Form } from "semantic-ui-react";
-import { FETCH_POSTS_QUERY } from "../util/Graphql";
-import { useForm } from "../util/hooks";
+import { gql, useMutation } from '@apollo/client';
+import React, { useState } from 'react';
+import { Button, Form } from 'semantic-ui-react';
+import { FETCH_POSTS_QUERY } from '../util/post/Graphql';
+import { useForm } from '../util/hooks';
 
 const PostForm = () => {
   const [errors, setErrors] = useState({});
 
   const { onChange, onSubmit, formData } = useForm(createPostCallback, {
-    body: "",
+    body: '',
   });
   const { body } = formData;
 
@@ -28,7 +28,7 @@ const PostForm = () => {
       });
 
       setErrors({});
-      formData.body = "";
+      formData.body = '';
     },
     onError(err) {
       // setErrors({ body: err.graphQLErrors[0].message }); // err.graphQLErrors[0].message === err.message
@@ -51,21 +51,21 @@ const PostForm = () => {
       <Form onSubmit={onSubmit}>
         <h2>Create Post</h2>
         <Form.Input
-          type="text"
-          placeholder="Hi World!"
-          name="body"
+          type='text'
+          placeholder='Hi World!'
+          name='body'
           // error={errors.body}
           onChange={onChange}
           value={body}
         />
-        <Button type="submit" color="teal">
+        <Button type='submit' color='teal'>
           Submit
         </Button>
       </Form>
 
       {Object.keys(errors).length > 0 && (
-        <div className="ui error message">
-          <ul className="list">
+        <div className='ui error message'>
+          <ul className='list'>
             {Object.values(errors).map((error) => (
               <li key={error}>{error}</li>
             ))}

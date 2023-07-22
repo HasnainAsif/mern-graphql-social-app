@@ -1,26 +1,28 @@
-import React, { useContext, useState } from 'react';
 import { gql, useMutation } from '@apollo/client';
+import React, { useContext, useState } from 'react';
 import { Button, Form } from 'semantic-ui-react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from '../util/hooks';
-import { AuthContext } from '../context/auth';
+import { AuthContext } from '../util/context/auth';
 
-const Login = () => {
+const Register = () => {
   const navigate = useNavigate();
   const context = useContext(AuthContext);
 
   const [errors, setErrors] = useState({});
 
-  const { onChange, onSubmit, formData } = useForm(loginUserCallback, {
+  const { onChange, onSubmit, formData } = useForm(registerUserCallback, {
     username: '',
+    email: '',
     password: '',
+    confirmPassword: '',
   });
-  const { username, password } = formData;
+  const { username, email, password, confirmPassword } = formData;
 
-  const [loginUser, { loading }] = useMutation(LOGIN_USER, {
-    update(proxy, { data: { login: userData } }) {
+  const [registerUser, { loading }] = useMutation(REGISTER_USER, {
+    update(proxy, { data: { register: userdata } }) {
       setErrors({});
-      context.login(userData);
+      context.login(userdata);
       navigate('/', { replace: true });
     },
     onError(err) {
@@ -30,15 +32,15 @@ const Login = () => {
   });
 
   // Using concept of hoisting
-  function loginUserCallback() {
-    loginUser();
+  function registerUserCallback() {
+    registerUser();
   }
 
   return (
     <div className='form-container'>
       {/* className={(loading && 'loading') ?? ''} */}
       <Form onSubmit={onSubmit} noValidate className={loading ? 'loading' : ''}>
-        <h1>Login</h1>
+        <h1>Register</h1>
         <Form.Input
           type='text'
           label='Username'
@@ -49,6 +51,15 @@ const Login = () => {
           value={username}
         />
         <Form.Input
+          type='email'
+          label='Email'
+          placeholder='Email...'
+          name='email'
+          error={errors.email}
+          onChange={onChange}
+          value={email}
+        />
+        <Form.Input
           type='password'
           label='Password'
           placeholder='Password...'
@@ -57,8 +68,17 @@ const Login = () => {
           onChange={onChange}
           value={password}
         />
+        <Form.Input
+          type='password'
+          label='Confirm Password'
+          placeholder='Confirm Password...'
+          name='confirmPassword'
+          error={errors.confirmPassword}
+          onChange={onChange}
+          value={confirmPassword}
+        />
         <Button type='submit' primary>
-          Login
+          Register
         </Button>
       </Form>
 
@@ -75,9 +95,21 @@ const Login = () => {
   );
 };
 
-const LOGIN_USER = gql`
-  mutation login($username: String!, $password: String!) {
-    login(username: $username, password: $password) {
+const REGISTER_USER = gql`
+  mutation register(
+    $username: String!
+    $email: String!
+    $password: String!
+    $confirmPassword: String!
+  ) {
+    register(
+      registerInput: {
+        username: $username
+        email: $email
+        password: $password
+        confirmPassword: $confirmPassword
+      }
+    ) {
       id
       username
       email
@@ -87,4 +119,4 @@ const LOGIN_USER = gql`
   }
 `;
 
-export default Login;
+export default Register;

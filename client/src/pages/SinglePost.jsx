@@ -14,7 +14,8 @@ import {
 import DeleteButton from '../components/DeleteButton';
 import LikeButton from '../components/LikeButton';
 import MyPopup from '../components/MyPopup';
-import { AuthContext } from '../context/auth';
+import { AuthContext } from '../util/context/auth';
+import { FETCH_POST_QUERY } from '../util/post/Graphql';
 
 const SinglePost = () => {
   const { user } = useContext(AuthContext);
@@ -34,6 +35,8 @@ const SinglePost = () => {
     update() {
       setComment('');
       commentInputRef.current.blur();
+
+      // No need to update cache because query is returing updated comments and comments count (Comments and Comments Count will be automatically updated in cache due to returned values).
     },
     variables: {
       postId: params.postId,
@@ -154,30 +157,6 @@ const SUBMIT_COMMENT_MUTATION = gql`
         createdAt
       }
       commentCount
-    }
-  }
-`;
-
-const FETCH_POST_QUERY = gql`
-  query getPost($postId: ID!) {
-    getPost(postId: $postId) {
-      id
-      body
-      username
-      createdAt
-      comments {
-        id
-        username
-        body
-        createdAt
-      }
-      likes {
-        id
-        username
-        createdAt
-      }
-      commentCount
-      likeCount
     }
   }
 `;

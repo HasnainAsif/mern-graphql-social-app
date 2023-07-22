@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Card, Icon, Image, Label, Popup } from 'semantic-ui-react';
+import { Button, Card, Icon, Image, Label } from 'semantic-ui-react';
 import moment from 'moment';
 import LikeButton from './LikeButton';
-import { AuthContext } from '../context/auth';
+import { AuthContext } from '../util/context/auth';
 import DeleteButton from './DeleteButton';
 import MyPopup from './MyPopup';
 

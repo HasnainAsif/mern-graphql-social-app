@@ -2,7 +2,7 @@ import { gql, useMutation } from '@apollo/client';
 import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Icon, Label } from 'semantic-ui-react';
-import { AuthContext } from '../context/auth';
+import { AuthContext } from '../util/context/auth';
 import MyPopup from './MyPopup';
 
 const LikeButton = ({ post: { id, likeCount, likes } = {} }) => {
@@ -14,6 +14,7 @@ const LikeButton = ({ post: { id, likeCount, likes } = {} }) => {
     {
       variables: { postId: id },
     }
+    // No need to update cache, because updated likes and likesCount are returned from query(it will automatically update cache)
   );
 
   useEffect(() => {

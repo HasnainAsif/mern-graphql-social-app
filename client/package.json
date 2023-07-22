@@ -8,6 +8,7 @@
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
     "apollo-link-context": "^1.0.20",
+    "apollo-link-error": "^1.1.13",
     "graphql": "^16.5.0",
     "jwt-decode": "^3.1.2",
     "moment": "^2.29.3",
