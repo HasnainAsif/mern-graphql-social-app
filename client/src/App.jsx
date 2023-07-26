@@ -15,14 +15,14 @@ import { AuthProvider } from './util/context/auth';
 import AuthLayout from './components/AuthLayout';
 import SinglePost from './pages/SinglePost';
 
-// TODO: If token is expired, redirect to login page
 // TODO: Fragment for posts/post or like/comment -- DONE
-// TODO: add table pagination of posts
+// TODO: add table pagination of posts -- In Progress
 // TODO: add load more pagination on comments
 // TODO: add Sorting (Most liked First, Most Commented First)
 // TODO: add Filtering by user, liked/unliked, commented/uncommented -- multi select
 // TODO: Add admin role
 // TODO: refetch functionality (to get updated comments and likes)
+// TODO: If token is expired, redirect to login page or add refreshed token.
 
 function App() {
   return (

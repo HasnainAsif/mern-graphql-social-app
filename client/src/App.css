@@ -16,11 +16,6 @@ body {
   background: linear-gradient(to right, #2b32b2, #1488cc);
 }
 
-.main-menu {
-  margin-top: 10px;
-  font-size: 1.8rem !important;
-}
-
 /* Form Css */
 .form-container {
   width: 400px;
@@ -61,7 +56,44 @@ p {
   word-wrap: break-word;
 }
 
-/* Post Card Start */
+/* Navbar */
+.main-menu {
+  margin-top: 10px;
+  font-size: 1.8rem !important;
+}
+.ui.main-menu.menu {
+  background-color: #fff;
+  border-radius: 5px;
+  border-bottom: none !important;
+}
+.ui.main-menu.menu a {
+  margin: 0 5px 1px !important;
+}
+
+/* Auth Form */
+.form h1 {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #1488cc;
+}
+
+.form h2 {
+  color: skyblue;
+}
+
+.form .field label {
+  font-size: 1.7rem !important;
+  margin-bottom: 0.5rem !important;
+  color: #fff !important;
+}
+
+.form .error.field label {
+  color: #ffcccc !important;
+}
+
+/* Home Posts */
+.posts-section .grid > .row:not(:first-child) {
+  margin-top: 25px;
+}
 .post-card {
   background: #fff;
   border-radius: 8px;
@@ -124,28 +156,10 @@ img {
 .card-actions span i {
   margin-right: 5px;
 }
-/* Post Card End */
 
+/* Comment */
 .comments-section h1 {
   margin-top: 1rem;
-}
-
-.form h1 {
-  padding-bottom: 10px;
-  border-bottom: 1px solid #1488cc;
-}
-
-.form h2 {
-  color: skyblue;
-}
-
-.form .field label {
-  font-size: 1.7rem !important;
-  margin-bottom: 0.5rem !important;
-}
-
-.form .error.field label {
-  color: #ffcccc !important;
 }
 
 /* Post Form */

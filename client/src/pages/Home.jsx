@@ -25,7 +25,7 @@ const Home = () => {
   //   });
 
   return (
-    <>
+    <div className='posts-section'>
       <Grid columns={3} padded>
         <Grid.Row centered>
           <h1>Recent Posts</h1>
@@ -49,7 +49,7 @@ const Home = () => {
           )}
         </Grid.Row>
       </Grid>
-    </>
+    </div>
   );
 };
 

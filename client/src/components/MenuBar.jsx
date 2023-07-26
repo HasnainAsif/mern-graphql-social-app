@@ -3,6 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu } from 'semantic-ui-react';
 import { AuthContext } from '../util/context/auth';
 
+// dusty green color
+
 const MenuBar = () => {
   const context = useContext(AuthContext);
 
