@@ -68,3 +68,35 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+## Apollo client Features
+
+Hooks Used:
+useQuery Hook
+useMutation Hook
+
+caching for posts
+caching for likes
+caching for comments
+
+#### useQuery methods
+
+fetchMore
+
+Fragments
+
+Cursor Pagination
+
+### Patterns
+
+Custom Hook:
+useForm
+RenderPropsPattern
+Hooks Pattern
+
+### COMMENTS FEATURES
+
+Fetch Comments
+Create comment and update cache to show updated comments and updated comment count
+Delete comment and update cache to show updated comments and updated comment count
+Cursor Pagination on comments

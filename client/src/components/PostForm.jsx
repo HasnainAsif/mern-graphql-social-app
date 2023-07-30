@@ -1,7 +1,7 @@
 import { gql, useMutation } from '@apollo/client';
 import React, { useState } from 'react';
 import { Button, Form } from 'semantic-ui-react';
-import { FETCH_POSTS_QUERY } from '../util/post/Graphql';
+import { FETCH_POSTS_QUERY, POST_FRAGMENT } from '../util/post/Graphql';
 import { useForm } from '../util/hooks';
 
 const PostForm = () => {
@@ -21,7 +21,7 @@ const PostForm = () => {
         // },
       });
       const allPosts = {};
-      allPosts.getPosts = [postData, ...cachedPosts.getPosts];
+      allPosts.getPosts = [postData, ...(cachedPosts.getPosts || [])];
       proxy.writeQuery({
         query: FETCH_POSTS_QUERY,
         data: allPosts,
@@ -31,6 +31,7 @@ const PostForm = () => {
       formData.body = '';
     },
     onError(err) {
+      console.log(err);
       // setErrors({ body: err.graphQLErrors[0].message }); // err.graphQLErrors[0].message === err.message
       setErrors(
         err.graphQLErrors[0].extensions.errors || {
@@ -81,25 +82,10 @@ const PostForm = () => {
 const CREATE_POST = gql`
   mutation createPost($body: String!) {
     createPost(body: $body) {
-      id
-      body
-      username
-      createdAt
-      likeCount
-      commentCount
-      comments {
-        id
-        body
-        username
-        createdAt
-      }
-      likes {
-        id
-        username
-        createdAt
-      }
+      ...post
     }
   }
+  ${POST_FRAGMENT}
 `;
 
 export default PostForm;

@@ -8,18 +8,12 @@ export const LIKES_FRAGMENT = gql`
   }
 `;
 
-const POST_FRAGMENT = gql`
+export const POST_FRAGMENT = gql`
   fragment post on Post {
     id
     body
     username
     createdAt
-    comments {
-      id
-      body
-      username
-      createdAt
-    }
     likes {
       id
       username
@@ -46,4 +40,27 @@ export const FETCH_POST_QUERY = gql`
     }
   }
   ${POST_FRAGMENT}
+`;
+
+export const FETCH_COMMENTS_QUERY = gql`
+  query GetComments($postId: String!, $first: Int, $after: String) {
+    getComments(
+      commentsArgs: { postId: $postId, first: $first, after: $after }
+    ) {
+      edges {
+        node {
+          id
+          body
+          postId
+          username
+          createdAt
+        }
+        cursor
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
 `;

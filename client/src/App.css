@@ -24,7 +24,7 @@ body {
 
 @media only screen and (min-width: 1200px) {
   .main-container {
-    width: 1200px !important;
+    width: 1150px !important;
   }
 }
 
@@ -65,6 +65,7 @@ p {
   background-color: #fff;
   border-radius: 5px;
   border-bottom: none !important;
+  margin-top: 10px;
 }
 .ui.main-menu.menu a {
   margin: 0 5px 1px !important;
@@ -91,9 +92,15 @@ p {
 }
 
 /* Home Posts */
+.posts-section {
+  display: inline-block;
+  margin-bottom: 10px;
+  width: 100%;
+}
 .posts-section .grid > .row:not(:first-child) {
   margin-top: 25px;
 }
+
 .post-card {
   background: #fff;
   border-radius: 8px;
@@ -157,9 +164,18 @@ img {
   margin-right: 5px;
 }
 
+.posts-section .table-pagination {
+  text-align: center;
+}
+
 /* Comment */
 .comments-section h1 {
   margin-top: 1rem;
+}
+.comments-section .comments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* Post Form */

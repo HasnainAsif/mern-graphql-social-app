@@ -5,12 +5,22 @@ import PostCard from '../components/PostCard';
 import PostForm from '../components/PostForm';
 import { AuthContext } from '../util/context/auth';
 import { FETCH_POSTS_QUERY } from '../util/post/Graphql';
+import React from 'react';
+import { Icon, Pagination } from 'semantic-ui-react';
+import { usePagination, useTablePagination } from '../util/hooks';
 // import { client } from '../../ApolloProvider';
 
 const Home = () => {
   const context = useContext(AuthContext);
-  const { loading, data: { getPosts: posts } = {} } =
-    useQuery(FETCH_POSTS_QUERY);
+
+  const {
+    loading,
+    error,
+    data: { getPosts: posts } = {},
+  } = useQuery(FETCH_POSTS_QUERY);
+
+  const { handleChangeScreenNo, paginatedData, pageNo, pagesCount } =
+    useTablePagination({ data: posts });
 
   // ANOTHER WAY TO QUERY DATA
   // client
@@ -40,7 +50,7 @@ const Home = () => {
             <h1>Loading...</h1>
           ) : (
             <Transition.Group duration={200}>
-              {posts.map((post) => (
+              {paginatedData.map((post) => (
                 <Grid.Column key={post.id} style={{ marginBottom: '20px' }}>
                   <PostCard post={post} />
                 </Grid.Column>
@@ -49,6 +59,22 @@ const Home = () => {
           )}
         </Grid.Row>
       </Grid>
+
+      <div className='table-pagination'>
+        <Pagination
+          ellipsisItem={{
+            content: <Icon name='ellipsis horizontal' />,
+            icon: true,
+          }}
+          firstItem={{ content: <Icon name='angle double left' />, icon: true }}
+          lastItem={{ content: <Icon name='angle double right' />, icon: true }}
+          prevItem={{ content: <Icon name='angle left' />, icon: true }}
+          nextItem={{ content: <Icon name='angle right' />, icon: true }}
+          totalPages={pagesCount}
+          onPageChange={(e, { activePage }) => handleChangeScreenNo(activePage)}
+          activePage={pageNo}
+        />
+      </div>
     </div>
   );
 };

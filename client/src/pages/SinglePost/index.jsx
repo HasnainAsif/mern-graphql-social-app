@@ -11,39 +11,28 @@ import {
   Image,
   Label,
 } from 'semantic-ui-react';
-import DeleteButton from '../components/DeleteButton';
-import LikeButton from '../components/LikeButton';
-import MyPopup from '../components/MyPopup';
-import { AuthContext } from '../util/context/auth';
-import { FETCH_POST_QUERY } from '../util/post/Graphql';
-import PostCard from '../components/PostCard';
+import DeleteButton from '../../components/DeleteButton';
+import LikeButton from '../../components/LikeButton';
+import MyPopup from '../../components/MyPopup';
+import { AuthContext } from '../../util/context/auth';
+import {
+  FETCH_COMMENTS_QUERY,
+  FETCH_POST_QUERY,
+} from '../../util/post/Graphql';
+import PostCard from '../../components/PostCard';
+import Comments from './Comments';
+import CommentForm from './CommentForm';
 
 const SinglePost = () => {
   const { user } = useContext(AuthContext);
   const params = useParams();
   const navigate = useNavigate();
 
-  const [comment, setComment] = useState('');
-  const commentInputRef = useRef(null);
-
   const {
     loading,
     data: { getPost } = {}, // setting default value, because initially data is undefined when loading is true
     error,
   } = useQuery(FETCH_POST_QUERY, { variables: { postId: params.postId } });
-
-  const [submitComment] = useMutation(SUBMIT_COMMENT_MUTATION, {
-    update() {
-      setComment('');
-      commentInputRef.current.blur();
-
-      // No need to update cache because query is returing updated comments and comments count (Comments and Comments Count will be automatically updated in cache due to returned values).
-    },
-    variables: {
-      postId: params.postId,
-      body: comment,
-    },
-  });
 
   const deletePostCallback = () => {
     navigate('/');
@@ -58,7 +47,7 @@ const SinglePost = () => {
       body,
       username,
       createdAt,
-      comments,
+      // comments,
       commentCount,
       likes,
       likeCount,
@@ -138,50 +127,9 @@ const SinglePost = () => {
                   deletePostCallback={deletePostCallback}
                 />
               </section>
-              {user && (
-                <Card fluid>
-                  <Card.Content>
-                    <p>Post a comment</p>
-                    <Form size='huge'>
-                      <div className='ui action input fluid'>
-                        <input
-                          type='text'
-                          placeholder='Comment...'
-                          name='comment'
-                          value={comment}
-                          onChange={(e) => setComment(e.target.value)}
-                          ref={commentInputRef}
-                        />
-                        <button
-                          type='submit'
-                          className='ui button teal'
-                          disabled={comment.trim() === ''}
-                          onClick={submitComment}
-                        >
-                          Submit
-                        </button>
-                      </div>
-                    </Form>
-                  </Card.Content>
-                </Card>
-              )}
-              <section className='comments-section'>
-                {commentCount && <h1>Comments</h1>}
-                {comments.map((comment) => (
-                  <Card fluid key={comment.id}>
-                    <Card.Content>
-                      {user && user.username === comment.username && (
-                        <DeleteButton postId={id} commentId={comment.id} />
-                      )}
-                      <Card.Header>{comment.username}</Card.Header>
-                      <Card.Meta>
-                        {moment(comment.createdAt).fromNow()}
-                      </Card.Meta>
-                      <Card.Description>{comment.body}</Card.Description>
-                    </Card.Content>
-                  </Card>
-                ))}
-              </section>
+              {user && <CommentForm postId={params.postId} />}
+
+              <Comments {...{ commentCount, postId: id }} />
             </Grid.Column>
           </Grid.Row>
         </Grid>
@@ -191,20 +139,5 @@ const SinglePost = () => {
 
   return postMarkup;
 };
-
-const SUBMIT_COMMENT_MUTATION = gql`
-  mutation ($postId: ID!, $body: String!) {
-    createComment(postId: $postId, body: $body) {
-      id
-      comments {
-        id
-        body
-        username
-        createdAt
-      }
-      commentCount
-    }
-  }
-`;
 
 export default SinglePost;
