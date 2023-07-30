@@ -82,8 +82,15 @@ caching for comments
 #### useQuery methods
 
 fetchMore
+notifyOnNetworkStatusChange
 
 Fragments
+
+returned values
+loading
+data
+error
+fetchMore
 
 Cursor Pagination
 

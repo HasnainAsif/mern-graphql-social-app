@@ -1,42 +1,86 @@
-const { UserInputError, AuthenticationError } = require("apollo-server");
-const Post = require("../../models/Post");
-const authMiddleware = require("../../utils/authMiddleware");
+const {
+  UserInputError,
+  AuthenticationError,
+  ApolloError,
+} = require('apollo-server');
+const { Post, Comment } = require('../../models/Post');
+const authMiddleware = require('../../utils/authMiddleware');
 const {
   validatePostInput,
   validateCommentInput,
-} = require("../../utils/validators");
+} = require('../../utils/validators');
+const { default: mongoose } = require('mongoose');
 
 const resolvers = {
   Query: {
     getPosts: async () => {
-      console.log("Get Posts");
       try {
         const posts = await Post.find().sort({ createdAt: -1 });
+
         return posts;
       } catch (error) {
         throw new Error(error);
       }
     },
     getPost: async (parent, { postId }) => {
-      console.log("Get Post");
       const post = await Post.findById(postId).catch((error) => {
-        if (error.message.indexOf("Cast to ObjectId failed") !== -1) {
-          error = "Post not found";
+        if (error.message.indexOf('Cast to ObjectId failed') !== -1) {
+          error = 'Post not found';
         }
 
         throw new Error(error);
       });
 
       if (!post) {
-        throw new Error("Post not found");
+        throw new Error('Post not found');
       }
 
       return post;
     },
+
+    getComments: async (parent, args) => {
+      const { postId, first, after } = args.commentsArgs;
+      const query = (after) => {
+        return after
+          ? { postId: postId, createdAt: { $lt: after } }
+          : { postId: postId };
+      };
+      try {
+        const comments = await Comment.find(query(after))
+          .sort({ createdAt: 'descending' })
+          .limit(first);
+
+        if (!comments || comments.length === 0) {
+          throw new Error('Comments not found');
+        }
+
+        const lastComment = comments[comments.length - 1];
+        const hasNextPage = await Comment.exists(
+          query(lastComment.createdAt)
+        ).sort({ createdAt: -1 });
+
+        const edges = comments.map((comment) => ({
+          node: comment,
+          cursor: comment.createdAt,
+        }));
+
+        const endCursor =
+          edges.length > 0 ? edges[edges.length - 1].cursor : null;
+
+        return {
+          edges,
+          pageInfo: {
+            hasNextPage: !!hasNextPage,
+            endCursor,
+          },
+        };
+      } catch (error) {
+        throw new Error(error.message || 'Error fetching comments');
+      }
+    },
   },
   Mutation: {
     createPost: async (parent, { body }, context) => {
-      console.log("Create Post");
       const { id, username } = authMiddleware(context);
 
       const { valid, errors } = validatePostInput({ body });
@@ -55,104 +99,150 @@ const resolvers = {
       return savedPost;
     },
     deletePost: async (parent, { postId }, context) => {
-      const { id, username } = authMiddleware(context);
+      const { id: userId, username } = authMiddleware(context);
 
       const post = await Post.findById(postId).catch((error) => {
-        if (error.message.indexOf("Cast to ObjectId failed") !== -1) {
-          error = "Post not found";
+        if (error.message.indexOf('Cast to ObjectId failed') !== -1) {
+          error = 'Post not found';
         }
-        throw new UserInputError("Post not found");
+        throw new UserInputError('Post not found');
       });
 
       if (!post) {
-        throw new UserInputError("Post not found");
+        throw new UserInputError('Post not found');
       }
 
-      if (post.username !== username) {
+      if (post.user.toString() !== userId) {
         // throw new AuthenticationError('Cannot delete Post. Access Denied.');
-        throw new AuthenticationError("Action not allowed");
+        throw new AuthenticationError('Action not allowed');
       }
 
-      // await Post.deleteOne({ _id: postId });
-      await post.delete();
+      const session = await mongoose.startSession();
+      try {
+        session.startTransaction();
 
-      return "Post deleted successfully";
+        if (post.comments?.length > 0) {
+          await Comment.deleteMany({ postId }); // delete all comments where postId matches
+        }
+        // await Post.deleteOne({ _id: postId });
+
+        await post.delete();
+
+        session.commitTransaction();
+
+        return 'Post deleted successfully';
+      } catch (error) {
+        session.abortTransaction();
+        throw new ApolloError('Server Error');
+      }
     },
     createComment: async (parent, { postId, body }, context) => {
-      const { username } = authMiddleware(context);
+      const { username, id } = authMiddleware(context);
 
       const { valid, errors } = validateCommentInput({ body });
       if (!valid) {
-        throw new UserInputError("Errors", { errors });
+        throw new UserInputError('Errors', { errors });
       }
 
       const post = await Post.findById(postId).catch((error) => {
-        if (error.message.indexOf("Cast to ObjectId failed") !== -1) {
-          error = "Post not found";
+        if (error.message.indexOf('Cast to ObjectId failed') !== -1) {
+          error = 'Post not found';
         }
         throw new UserInputError(error);
       });
 
       if (!post) {
-        throw new UserInputError("Post not found");
+        throw new UserInputError('Post not found');
       }
 
-      post.comments.unshift({
-        body,
-        username,
-        createdAt: new Date().toISOString(),
-      });
-      const updatedPost = await post.save();
+      const session = await mongoose.startSession();
+      try {
+        session.startTransaction();
 
-      return updatedPost;
+        const comment = await Comment.create({
+          postId,
+          body,
+          username,
+          user: id,
+          createdAt: new Date().toISOString(),
+        });
+
+        post.comments.unshift(comment.id); // Add comment to comment document
+        await post.save(); // Add comment reference to post document
+
+        session.commitTransaction();
+
+        return { node: comment, cursor: comment.createdAt };
+      } catch (error) {
+        session.abortTransaction();
+        throw new ApolloError('Server Error');
+      }
     },
     deleteComment: async (parent, { postId, commentId }, context) => {
-      const { username } = authMiddleware(context);
+      const { id: userId } = authMiddleware(context);
 
       const post = await Post.findById(postId).catch((error) => {
-        if (error.message.indexOf("Cast to ObjectId failed") !== -1) {
-          error = "Post not found";
+        if (error.message.indexOf('Cast to ObjectId failed') !== -1) {
+          error = 'Post not found';
         }
         throw new UserInputError(error);
       });
-
       if (!post) {
-        throw new UserInputError("Post not found");
+        throw new UserInputError('Post not found');
+      }
+      const comment = await Comment.findById(commentId).catch((error) => {
+        if (error.message.indexOf('Cast to ObjectId failed') !== -1) {
+          error = 'Comment not found';
+        }
+        throw new UserInputError(error);
+      });
+      if (!comment) {
+        throw new UserInputError('Comment not found');
       }
 
       const commentIdx = post.comments.findIndex(
         (comment) => comment.id === commentId
       );
 
-      const comment = post.comments[commentIdx];
+      const postComment = post.comments[commentIdx];
 
-      if (!comment) {
-        throw new UserInputError("Comment not found");
+      if (postComment === -1) {
+        throw new UserInputError('Comment not found');
       }
 
-      if (comment.username !== username) {
+      if (comment.user.toString() !== userId) {
         // throw new AuthenticationError('Cannot delete Post. Access Denied.');
-        throw new AuthenticationError("Action not allowed");
+        throw new AuthenticationError('Action not allowed');
       }
 
-      await post.comments.splice(commentIdx, 1);
+      const session = await mongoose.startSession();
+      try {
+        session.startTransaction();
 
-      await post.save();
+        await comment.delete(); // delete comment from comment document
+        await post.comments.splice(commentIdx, 1);
+        await post.save(); // delete comment reference from post document
 
-      return post;
+        session.commitTransaction();
+
+        return post;
+      } catch (error) {
+        session.abortTransaction();
+        throw new ApolloError('Server Error');
+      }
     },
     likeUnlikePost: async (parent, { postId }, context) => {
       const { id, username } = authMiddleware(context);
 
       const post = await Post.findById(postId).catch((error) => {
-        if (error.message.indexOf("Cast to ObjectId failed") !== -1) {
-          error = "Post not found";
+        if (error.message.indexOf('Cast to ObjectId failed') !== -1) {
+          error = 'Post not found';
         }
-        throw new UserInputError("Post not found");
+        throw new UserInputError('Post not found');
       });
 
       if (!post) {
-        throw new UserInputError("Post not found");
+        throw new UserInputError('Post not found');
       }
 
       //

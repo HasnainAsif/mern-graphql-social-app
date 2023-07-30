@@ -3,6 +3,7 @@ import React, { Fragment, useState } from 'react';
 import { Button, Confirm, Icon } from 'semantic-ui-react';
 import { FETCH_COMMENTS_QUERY, FETCH_POSTS_QUERY } from '../util/post/Graphql';
 import MyPopup from './MyPopup';
+import { COMMENTS_PAGINATION_LIMIT } from '../util/Constants';
 
 const DeleteButton = ({ postId, commentId, callback }) => {
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -19,7 +20,7 @@ const DeleteButton = ({ postId, commentId, callback }) => {
         // ---------------- Delete comment From cache also -------------------
         let cachedComments = proxy.readQuery({
           query: FETCH_COMMENTS_QUERY,
-          variables: { postId, first: 2 },
+          variables: { postId, first: COMMENTS_PAGINATION_LIMIT },
         });
 
         const filteredEdges = cachedComments.getComments.edges.filter(
@@ -38,7 +39,7 @@ const DeleteButton = ({ postId, commentId, callback }) => {
         proxy.writeQuery({
           query: FETCH_COMMENTS_QUERY,
           data: allComments,
-          variables: { postId, first: 2 },
+          variables: { postId, first: COMMENTS_PAGINATION_LIMIT },
         });
       }
 

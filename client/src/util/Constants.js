@@ -7,3 +7,5 @@ export const PAGINATION_TYPE = {
   CURSOR: 'curson',
   OFFSET: 'offset',
 };
+
+export const COMMENTS_PAGINATION_LIMIT = 2;

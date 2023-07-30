@@ -6,9 +6,8 @@ const postSchema = new Schema({
   createdAt: String,
   comments: [
     {
-      body: String,
-      username: String,
-      createdAt: String,
+      type: Schema.Types.ObjectId,
+      ref: 'Comment',
     },
   ],
   likes: [
@@ -23,4 +22,18 @@ const postSchema = new Schema({
   },
 });
 
-module.exports = model('Post', postSchema);
+const commentSchema = new Schema({
+  postId: { type: Schema.Types.ObjectId, ref: 'Post' },
+  body: String,
+  username: String,
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'users',
+  },
+  createdAt: String,
+});
+
+module.exports = {
+  Post: model('Post', postSchema),
+  Comment: model('Comment', commentSchema),
+};

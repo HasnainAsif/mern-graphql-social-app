@@ -27,3 +27,5 @@ mongoose
 // server.listen(5000).then((res) => {
 //   console.log(res.url);
 // });
+
+// createpost, login is done

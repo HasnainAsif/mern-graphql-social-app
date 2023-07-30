@@ -6,8 +6,8 @@ const typeDefs = gql`
     body: String!
     username: String!
     createdAt: String!
-    comments: [Comment]! # ! means comments  will be an array and will have zero or more items.
-    likes: [Like]!
+    # comments: [Comment]!
+    likes: [Like]! # ! means likes will be an array and will have zero or more items.
     likeCount: Int!
     commentCount: Int!
   }
@@ -16,7 +16,21 @@ const typeDefs = gql`
     body: String!
     username: String!
     createdAt: String!
+    postId: ID!
   }
+  type CommentEdge {
+    node: Comment!
+    cursor: String!
+  }
+  type PageInfo {
+    hasNextPage: Boolean!
+    endCursor: String
+  }
+  type GetComments {
+    edges: [CommentEdge]!
+    pageInfo: PageInfo!
+  }
+
   type Like {
     id: ID!
     username: String!
@@ -37,10 +51,16 @@ const typeDefs = gql`
     password: String!
     confirmPassword: String!
   }
+  input GetCommentsArgs {
+    postId: String!
+    first: Int
+    after: String
+  }
 
   type Query {
     getPosts: [Post]
     getPost(postId: ID!): Post!
+    getComments(commentsArgs: GetCommentsArgs): GetComments!
   }
 
   type Mutation {
@@ -49,7 +69,7 @@ const typeDefs = gql`
 
     createPost(body: String!): Post!
     deletePost(postId: ID!): String!
-    createComment(postId: ID!, body: String!): Post!
+    createComment(postId: ID!, body: String!): CommentEdge!
     deleteComment(postId: ID!, commentId: ID!): Post!
     likeUnlikePost(postId: ID!): Post!
   }

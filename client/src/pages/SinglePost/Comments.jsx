@@ -4,7 +4,11 @@ import { Button, Card, Dropdown } from 'semantic-ui-react';
 import { AuthContext } from '../../util/context/auth';
 import moment from 'moment';
 import { usePagination } from '../../util/hooks';
-import { PAGINATION_SIDE, PAGINATION_TYPE } from '../../util/Constants';
+import {
+  COMMENTS_PAGINATION_LIMIT,
+  PAGINATION_SIDE,
+  PAGINATION_TYPE,
+} from '../../util/Constants';
 import { useQuery } from '@apollo/client';
 import { FETCH_COMMENTS_QUERY } from '../../util/post/Graphql';
 
@@ -16,19 +20,11 @@ const Comments = ({ commentCount, postId: id }) => {
     data: { getComments: comments } = {}, // setting default value, because initially data is undefined when loading is true
     error,
     fetchMore,
-  } = useQuery(FETCH_COMMENTS_QUERY, { variables: { postId: id, first: 2 } });
+  } = useQuery(FETCH_COMMENTS_QUERY, {
+    variables: { postId: id, first: COMMENTS_PAGINATION_LIMIT },
+    notifyOnNetworkStatusChange: true, // on initial load and on calling fetchMore, it will make loading true
+  });
   const { edges, pageInfo } = comments || {};
-
-  // const { handleChangeScreenNo, pageNo, lastPage, paginatedData } =
-  //   usePagination({ data: comments });
-
-  // const [paginationSide, setPaginationSide] = useState(
-  //   PAGINATION_SIDE.FRONTEND
-  // );
-
-  // const onChangePaginationSide = (e, { value }) => {
-  //   setPaginationSide(value);
-  // };
 
   // append new data into previous data and update cache
   const updateQuery = (previousResult, { fetchMoreResult }) => {
@@ -82,6 +78,7 @@ const Comments = ({ commentCount, postId: id }) => {
           </div>
         )} */}
       </div>
+      {loading && 'Loading...'}
       {edges?.map(({ node }) => (
         <Card fluid key={node.id}>
           <Card.Content>

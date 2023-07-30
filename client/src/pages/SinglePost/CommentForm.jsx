@@ -5,6 +5,7 @@ import {
   FETCH_COMMENTS_QUERY,
   FETCH_POST_QUERY,
 } from '../../util/post/Graphql';
+import { COMMENTS_PAGINATION_LIMIT } from '../../util/Constants';
 
 const CommentForm = (params) => {
   const [comment, setComment] = useState('');
@@ -15,7 +16,7 @@ const CommentForm = (params) => {
       // -------------------- add new comment in comment's query cache ---------------------
       let cachedComments = proxy.readQuery({
         query: FETCH_COMMENTS_QUERY,
-        variables: { postId: params.postId, first: 2 },
+        variables: { postId: params.postId, first: COMMENTS_PAGINATION_LIMIT },
       });
 
       if (!cachedComments) {
@@ -39,7 +40,7 @@ const CommentForm = (params) => {
       proxy.writeQuery({
         query: FETCH_COMMENTS_QUERY,
         data: allComments,
-        variables: { postId: params.postId, first: 2 },
+        variables: { postId: params.postId, first: COMMENTS_PAGINATION_LIMIT },
       });
 
       // ----------------------- update comments count in post query cache -----------------------
