@@ -1,18 +1,13 @@
 import React, { useContext, useState } from 'react';
 import DeleteButton from '../../components/DeleteButton';
-import { Button, Card, Dropdown } from 'semantic-ui-react';
+import { Button, Card } from 'semantic-ui-react';
 import { AuthContext } from '../../util/context/auth';
 import moment from 'moment';
-import { usePagination } from '../../util/hooks';
-import {
-  COMMENTS_PAGINATION_LIMIT,
-  PAGINATION_SIDE,
-  PAGINATION_TYPE,
-} from '../../util/Constants';
-import { useQuery } from '@apollo/client';
+import { COMMENTS_PAGINATION_LIMIT } from '../../util/Constants';
+import { NetworkStatus, useQuery } from '@apollo/client';
 import { FETCH_COMMENTS_QUERY } from '../../util/post/Graphql';
 
-const Comments = ({ commentCount, postId: id }) => {
+const Comments = ({ postId: id }) => {
   const { user } = useContext(AuthContext);
 
   const {
@@ -20,9 +15,11 @@ const Comments = ({ commentCount, postId: id }) => {
     data: { getComments: comments } = {}, // setting default value, because initially data is undefined when loading is true
     error,
     fetchMore,
+    refetch,
+    networkStatus,
   } = useQuery(FETCH_COMMENTS_QUERY, {
     variables: { postId: id, first: COMMENTS_PAGINATION_LIMIT },
-    notifyOnNetworkStatusChange: true, // on initial load and on calling fetchMore, it will make loading true
+    notifyOnNetworkStatusChange: true, // on initial load and on calling fetchMore and refetch, it will make loading true and change networkStatus
   });
   const { edges, pageInfo } = comments || {};
 
@@ -48,37 +45,34 @@ const Comments = ({ commentCount, postId: id }) => {
   };
 
   const handleChangeLoadMore = () => {
-    fetchMore({ variables: { after: pageInfo.endCursor }, updateQuery });
+    // """Unpassed/Default Variables fetched from previous execution"""
+    // we can pass new variables to fetchMore. otherwise, the query uses the same variables that it used in previous execution.
+    fetchMore({ variables: { after: pageInfo.endCursor }, updateQuery }); // postId and first variables, will be fetched from previous execution(previous execution can be refetch or initial useQuery)
+  };
+  const handleChangeRefetch = () => {
+    // """Unpassed/Default Variables are from useQuery"""
+    // we can pass new variables to refech. otherwise, the query uses the same variables that it used in useQuery.
+    refetch({});
   };
 
   return (
     <section className='comments-section'>
       <div className='comments-header'>
         <h1>Comments</h1>
-        {/* {!!commentCount && (
-          <div>
-            <Dropdown
-              fluid
-              defaultValue={PAGINATION_SIDE.FRONTEND}
-              selection
-              onChange={onChangePaginationSide}
-              options={[
-                {
-                  key: 'fp',
-                  value: PAGINATION_SIDE.FRONTEND,
-                  text: 'Frontend pagination',
-                },
-                {
-                  key: 'bp',
-                  value: PAGINATION_SIDE.BACKEND,
-                  text: 'Backend pagination',
-                },
-              ]}
-            />
-          </div>
-        )} */}
+
+        <div>
+          <Button color='blue' floated='right' onClick={handleChangeRefetch}>
+            Refetch Comments
+          </Button>
+        </div>
       </div>
-      {loading && 'Loading...'}
+
+      {loading && <div>'Loading...'</div>}
+      {networkStatus === NetworkStatus.refetch && <div>'Refetching!'</div>}
+      {networkStatus === NetworkStatus.fetchMore && (
+        <div> 'Fetching More!'</div>
+      )}
+
       {edges?.map(({ node }) => (
         <Card fluid key={node.id}>
           <Card.Content>

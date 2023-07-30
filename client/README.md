@@ -91,6 +91,8 @@ loading
 data
 error
 fetchMore
+refetch
+networkStatus --> will change based on initial_loading/fetchMore/refetch/error/data etc
 
 Cursor Pagination
 
@@ -106,4 +108,5 @@ Hooks Pattern
 Fetch Comments
 Create comment and update cache to show updated comments and updated comment count
 Delete comment and update cache to show updated comments and updated comment count
-Cursor Pagination on comments
+Cursor based Pagination on comments
+Refetch Comments functionality to fetch latest comments
