@@ -111,3 +111,8 @@ Create comment and update cache to show updated comments and updated comment cou
 Delete comment and update cache to show updated comments and updated comment count
 Cursor based Pagination on comments
 Refetch Comments functionality to fetch latest comments
+
+### LIKES FEATURES
+
+Like/Unlike Post
+Optimistic Response // updates UI Without waiting for response from request. After request completion, UI will update again.
