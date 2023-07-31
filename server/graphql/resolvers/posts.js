@@ -13,11 +13,18 @@ const { default: mongoose } = require('mongoose');
 
 const resolvers = {
   Query: {
-    getPosts: async () => {
+    getPosts: async (parens, args) => {
       try {
-        const posts = await Post.find().sort({ createdAt: -1 });
+        const { limit, offset } = args;
 
-        return posts;
+        const totalPosts = await Post.countDocuments();
+
+        const posts = await Post.find()
+          .sort({ createdAt: -1 })
+          .skip(offset)
+          .limit(limit);
+
+        return { posts, totalPosts };
       } catch (error) {
         throw new Error(error);
       }

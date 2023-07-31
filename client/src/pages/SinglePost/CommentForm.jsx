@@ -5,18 +5,22 @@ import {
   FETCH_COMMENTS_QUERY,
   FETCH_POST_QUERY,
 } from '../../util/post/Graphql';
-import { COMMENTS_PAGINATION_LIMIT } from '../../util/Constants';
+import { PAGINATION_LIMIT } from '../../util/Constants';
 
 const CommentForm = (params) => {
   const [comment, setComment] = useState('');
   const commentInputRef = useRef(null);
 
   const [submitComment] = useMutation(SUBMIT_COMMENT_MUTATION, {
+    variables: {
+      postId: params.postId,
+      body: comment,
+    },
     update(proxy, { data: { createComment: commentEdge } }) {
       // -------------------- add new comment in comment's query cache ---------------------
       let cachedComments = proxy.readQuery({
         query: FETCH_COMMENTS_QUERY,
-        variables: { postId: params.postId, first: COMMENTS_PAGINATION_LIMIT },
+        variables: { postId: params.postId, first: PAGINATION_LIMIT.COMMENTS },
       });
 
       if (!cachedComments) {
@@ -40,7 +44,7 @@ const CommentForm = (params) => {
       proxy.writeQuery({
         query: FETCH_COMMENTS_QUERY,
         data: allComments,
-        variables: { postId: params.postId, first: COMMENTS_PAGINATION_LIMIT },
+        variables: { postId: params.postId, first: PAGINATION_LIMIT.COMMENTS },
       });
 
       // ----------------------- update comments count in post query cache -----------------------
@@ -62,10 +66,6 @@ const CommentForm = (params) => {
 
       setComment('');
       commentInputRef.current.blur();
-    },
-    variables: {
-      postId: params.postId,
-      body: comment,
     },
   });
 

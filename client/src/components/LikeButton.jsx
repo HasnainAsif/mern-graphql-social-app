@@ -5,14 +5,14 @@ import { Button, Icon, Label } from 'semantic-ui-react';
 import { AuthContext } from '../util/context/auth';
 import MyPopup from './MyPopup';
 
-const LikeButton = ({ post: { id, likeCount, likes } = {} }) => {
+const LikeButton = ({ post: { id: postId, likeCount, likes } = {} }) => {
   const { user } = useContext(AuthContext);
   const [liked, setLiked] = useState(false);
 
   const [likeUnlikePost, { loading, data, error }] = useMutation(
     LIKE_UNLIKE_MUTATION,
     {
-      variables: { postId: id },
+      variables: { postId },
     }
     // No need to update cache, because updated likes and likesCount are returned from query(it will automatically update cache)
   );
@@ -47,10 +47,6 @@ const LikeButton = ({ post: { id, likeCount, likes } = {} }) => {
           {likeCount}
         </Label>
       </Button>
-      {/* <span onClick={likeUnlikePost}>
-        <i className={`fa-${liked ? 'solid' : 'regular'} fa-heart`}></i>
-        {likeCount}
-      </span> */}
     </MyPopup>
   );
 };

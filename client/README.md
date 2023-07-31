@@ -79,9 +79,10 @@ caching for posts
 caching for likes
 caching for comments
 
-#### useQuery methods
+### useQuery methods
 
 fetchMore
+refetch
 notifyOnNetworkStatusChange
 
 Fragments
@@ -95,13 +96,13 @@ refetch
 networkStatus --> will change based on initial_loading/fetchMore/refetch/error/data etc
 
 Cursor Pagination
+Offset Pagination
 
 ### Patterns
 
 Custom Hook:
 useForm
-RenderPropsPattern
-Hooks Pattern
+usePagination
 
 ### COMMENTS FEATURES
 

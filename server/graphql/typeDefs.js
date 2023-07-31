@@ -11,6 +11,11 @@ const typeDefs = gql`
     likeCount: Int!
     commentCount: Int!
   }
+  type GetPosts {
+    posts: [Post]
+    totalPosts: Int
+  }
+
   type Comment {
     id: ID!
     body: String!
@@ -58,7 +63,7 @@ const typeDefs = gql`
   }
 
   type Query {
-    getPosts: [Post]
+    getPosts(limit: Int, offset: Int): GetPosts!
     getPost(postId: ID!): Post!
     getComments(commentsArgs: GetCommentsArgs): GetComments!
   }

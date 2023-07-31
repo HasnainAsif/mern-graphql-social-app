@@ -1,10 +1,13 @@
 import { gql } from '@apollo/client';
 
 export const LIKES_FRAGMENT = gql`
-  fragment likes on Like {
-    id
-    username
-    createdAt
+  fragment likes on Likes {
+    likes {
+      id
+      username
+      createdAt
+    }
+    likeCount
   }
 `;
 
@@ -19,15 +22,18 @@ export const POST_FRAGMENT = gql`
       username
       createdAt
     }
-    commentCount
     likeCount
+    commentCount
   }
 `;
 
 export const FETCH_POSTS_QUERY = gql`
-  query getPosts {
-    getPosts {
-      ...post
+  query getPosts($limit: Int, $offset: Int) {
+    getPosts(limit: $limit, offset: $offset) {
+      posts {
+        ...post
+      }
+      totalPosts
     }
   }
   ${POST_FRAGMENT}

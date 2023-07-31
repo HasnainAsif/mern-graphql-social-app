@@ -24,16 +24,25 @@ export const useForm = (callback, initialState = {}) => {
 export const useTablePagination = ({
   data = [],
   itemsPerScreen = ITEMS_PER_SCREEN,
+  totalNoOfData,
+  type = 'frontend',
 }) => {
+  const [paginatedData, setPaginatedData] = useState(undefined);
   //Page No. e.g; 1 or 2 or 3 etc
   const [pageNo, setPageNo] = useState(1);
   //Total No Of Pages
   const [pagesCount, setPagesCount] = useState(0);
 
-  const handleChangeScreenNo = (value) => {
+  const handleChangePageNo = (value, cb) => {
     setPageNo(value);
+
+    if (cb) {
+      const offset = value * itemsPerScreen - itemsPerScreen;
+      cb({ offset });
+    }
   };
-  const countData = data?.length;
+
+  const countData = totalNoOfData ?? data?.length;
 
   //No Of Pages
   useEffect(() => {
@@ -42,53 +51,26 @@ export const useTablePagination = ({
     } else {
       setPagesCount(Math.floor(countData / itemsPerScreen) + 1);
     }
-  }, [countData]);
+  }, [countData, itemsPerScreen]);
 
-  const fromPageNo = pageNo * itemsPerScreen - itemsPerScreen;
-  const toPageNo = itemsPerScreen * pageNo;
-  const paginatedData = data?.slice(fromPageNo, toPageNo);
-
-  return {
-    pageNo,
-    pagesCount,
-    paginatedData: paginatedData || [],
-    handleChangeScreenNo,
-    lastPage: pagesCount === pageNo,
-  };
-};
-
-export const useCursorPagination = ({
-  data = [],
-  itemsPerScreen = ITEMS_PER_SCREEN,
-}) => {
-  //Page No. e.g; 1 or 2 or 3 etc
-  const [pageNo, setPageNo] = useState(1);
-  //Total No Of Pages
-  const [pagesCount, setPagesCount] = useState(0);
-
-  const handleChangeScreenNo = (value) => {
-    setPageNo(value);
-  };
-  const countData = data?.length;
-
-  //No Of Pages
+  // Paginated Data
   useEffect(() => {
-    if (countData % itemsPerScreen === 0) {
-      setPagesCount(Math.floor(countData / itemsPerScreen));
-    } else {
-      setPagesCount(Math.floor(countData / itemsPerScreen) + 1);
+    if (type === 'backend') {
+      setPaginatedData(data);
+      return;
     }
-  }, [countData]);
 
-  const fromPageNo = pageNo * itemsPerScreen - itemsPerScreen;
-  const toPageNo = itemsPerScreen * pageNo;
-  const paginatedData = data?.slice(fromPageNo, toPageNo);
+    // Type = 'frontend'
+    const from = pageNo * itemsPerScreen - itemsPerScreen;
+    const to = itemsPerScreen * pageNo;
+    setPaginatedData(data?.slice(from, to));
+  }, [pageNo, data, itemsPerScreen, type]);
 
   return {
     pageNo,
     pagesCount,
     paginatedData: paginatedData || [],
-    handleChangeScreenNo,
+    handleChangePageNo,
     lastPage: pagesCount === pageNo,
   };
 };

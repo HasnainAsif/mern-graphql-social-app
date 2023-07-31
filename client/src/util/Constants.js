@@ -8,4 +8,7 @@ export const PAGINATION_TYPE = {
   OFFSET: 'offset',
 };
 
-export const COMMENTS_PAGINATION_LIMIT = 2;
+export const PAGINATION_LIMIT = {
+  POSTS: 5,
+  COMMENTS: 2,
+};

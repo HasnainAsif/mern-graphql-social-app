@@ -3,7 +3,7 @@ import DeleteButton from '../../components/DeleteButton';
 import { Button, Card } from 'semantic-ui-react';
 import { AuthContext } from '../../util/context/auth';
 import moment from 'moment';
-import { COMMENTS_PAGINATION_LIMIT } from '../../util/Constants';
+import { PAGINATION_LIMIT } from '../../util/Constants';
 import { NetworkStatus, useQuery } from '@apollo/client';
 import { FETCH_COMMENTS_QUERY } from '../../util/post/Graphql';
 
@@ -18,7 +18,7 @@ const Comments = ({ postId: id }) => {
     refetch,
     networkStatus,
   } = useQuery(FETCH_COMMENTS_QUERY, {
-    variables: { postId: id, first: COMMENTS_PAGINATION_LIMIT },
+    variables: { postId: id, first: PAGINATION_LIMIT.COMMENTS },
     notifyOnNetworkStatusChange: true, // on initial load and on calling fetchMore and refetch, it will make loading true and change networkStatus
   });
   const { edges, pageInfo } = comments || {};

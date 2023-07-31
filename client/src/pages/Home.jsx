@@ -7,7 +7,8 @@ import { AuthContext } from '../util/context/auth';
 import { FETCH_POSTS_QUERY } from '../util/post/Graphql';
 import React from 'react';
 import { Icon, Pagination } from 'semantic-ui-react';
-import { usePagination, useTablePagination } from '../util/hooks';
+import { useTablePagination } from '../util/hooks';
+import { PAGINATION_LIMIT } from '../util/Constants';
 // import { client } from '../../ApolloProvider';
 
 const Home = () => {
@@ -16,23 +17,26 @@ const Home = () => {
   const {
     loading,
     error,
-    data: { getPosts: posts } = {},
-  } = useQuery(FETCH_POSTS_QUERY);
+    data: { getPosts = {} } = {},
+    refetch,
+  } = useQuery(FETCH_POSTS_QUERY, {
+    variables: {
+      limit: PAGINATION_LIMIT.POSTS,
+      offset: 0,
+    },
+  });
+  const { posts, totalPosts } = getPosts;
 
-  const { handleChangeScreenNo, paginatedData, pageNo, pagesCount } =
-    useTablePagination({ data: posts });
+  const { handleChangePageNo, paginatedData, pageNo, pagesCount } =
+    useTablePagination({
+      data: posts,
+      totalNoOfData: totalPosts,
+      type: 'backend',
+    });
 
-  // ANOTHER WAY TO QUERY DATA
-  // client
-  //   .query({
-  //     query: FETCH_POSTS_QUERY,
-  //   })
-  //   .then((result) => {
-  //     console.log('Areas 1 Data: ', result.data);
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
+  const onChangePageNo = ({ offset }) => {
+    refetch({ offset });
+  };
 
   return (
     <div className='posts-section'>
@@ -71,7 +75,9 @@ const Home = () => {
           prevItem={{ content: <Icon name='angle left' />, icon: true }}
           nextItem={{ content: <Icon name='angle right' />, icon: true }}
           totalPages={pagesCount}
-          onPageChange={(e, { activePage }) => handleChangeScreenNo(activePage)}
+          onPageChange={(e, { activePage }) =>
+            handleChangePageNo(activePage, onChangePageNo)
+          }
           activePage={pageNo}
         />
       </div>
