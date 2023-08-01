@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import DeleteButton from '../../components/DeleteButton';
 import { Button, Card } from 'semantic-ui-react';
 import { AuthContext } from '../../util/context/auth';
@@ -9,6 +9,7 @@ import { FETCH_COMMENTS_QUERY } from '../../util/post/Graphql';
 
 const Comments = ({ postId: id }) => {
   const { user } = useContext(AuthContext);
+  const [showComments, setShowComments] = useState(false);
 
   const {
     loading,
@@ -21,6 +22,7 @@ const Comments = ({ postId: id }) => {
     variables: { postId: id, first: PAGINATION_LIMIT.COMMENTS },
     notifyOnNetworkStatusChange: true, // on initial load and on calling fetchMore and refetch, it will make loading true and change networkStatus
     fetchPolicy: 'network-only', // Always fetch data from network and update cache
+    skip: !showComments, // skip network call if showComments is false. And make network call when showComments will be true
   });
   const { edges, pageInfo } = comments || {};
 
@@ -45,15 +47,18 @@ const Comments = ({ postId: id }) => {
     };
   };
 
-  const handleChangeLoadMore = () => {
+  const handleLoadMoreComments = () => {
     // """Unpassed/Default Variables fetched from previous execution"""
     // we can pass new variables to fetchMore. otherwise, the query uses the same variables that it used in previous execution.
     fetchMore({ variables: { after: pageInfo.endCursor }, updateQuery }); // postId and first variables, will be fetched from previous execution(previous execution can be refetch or initial useQuery)
   };
-  const handleChangeRefetch = () => {
+  const handleRefetchComments = () => {
     // """Unpassed/Default Variables are from useQuery"""
     // we can pass new variables to refech. otherwise, the query uses the same variables that it used in useQuery.
     refetch({});
+  };
+  const handleFetchComments = () => {
+    setShowComments(true);
   };
 
   return (
@@ -62,9 +67,23 @@ const Comments = ({ postId: id }) => {
         <h1>Comments</h1>
 
         <div>
-          <Button color='blue' floated='right' onClick={handleChangeRefetch}>
-            Refetch Comments
-          </Button>
+          {showComments ? (
+            <Button
+              color='blue'
+              floated='right'
+              onClick={handleRefetchComments}
+            >
+              Refetch Comments
+            </Button>
+          ) : (
+            <Button
+              color='facebook'
+              floated='right'
+              onClick={handleFetchComments}
+            >
+              Fetch Comments
+            </Button>
+          )}
         </div>
       </div>
 
@@ -90,7 +109,7 @@ const Comments = ({ postId: id }) => {
         color='blue'
         floated='right'
         disabled={!pageInfo?.hasNextPage}
-        onClick={handleChangeLoadMore}
+        onClick={handleLoadMoreComments}
       >
         Load More
       </Button>

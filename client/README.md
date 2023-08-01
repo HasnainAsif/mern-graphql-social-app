@@ -123,6 +123,7 @@ Cursor based Pagination on comments
 Refetch Comments functionality to fetch latest comments
 Caching
 fetchPolicy: 'network-only'
+skip query if condition not met
 
 ### LIKES FEATURES
 
