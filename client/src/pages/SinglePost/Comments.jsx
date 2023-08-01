@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import DeleteButton from '../../components/DeleteButton';
 import { Button, Card } from 'semantic-ui-react';
 import { AuthContext } from '../../util/context/auth';
@@ -20,6 +20,7 @@ const Comments = ({ postId: id }) => {
   } = useQuery(FETCH_COMMENTS_QUERY, {
     variables: { postId: id, first: PAGINATION_LIMIT.COMMENTS },
     notifyOnNetworkStatusChange: true, // on initial load and on calling fetchMore and refetch, it will make loading true and change networkStatus
+    fetchPolicy: 'network-only', // Always fetch data from network and update cache
   });
   const { edges, pageInfo } = comments || {};
 

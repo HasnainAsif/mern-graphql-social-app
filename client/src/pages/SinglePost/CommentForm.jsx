@@ -1,11 +1,11 @@
 import { gql, useMutation } from '@apollo/client';
 import React, { useRef, useState } from 'react';
 import { Card, Form } from 'semantic-ui-react';
+import { FETCH_POST_QUERY } from '../../util/post/Graphql';
 import {
-  FETCH_COMMENTS_QUERY,
-  FETCH_POST_QUERY,
-} from '../../util/post/Graphql';
-import { PAGINATION_LIMIT } from '../../util/Constants';
+  readCommentsCacheByPostId,
+  writeCommentsCacheByPostId,
+} from '../../util/helper';
 
 const CommentForm = (params) => {
   const [comment, setComment] = useState('');
@@ -18,9 +18,9 @@ const CommentForm = (params) => {
     },
     update(proxy, { data: { createComment: commentEdge } }) {
       // -------------------- add new comment in comment's query cache ---------------------
-      let cachedComments = proxy.readQuery({
-        query: FETCH_COMMENTS_QUERY,
-        variables: { postId: params.postId, first: PAGINATION_LIMIT.COMMENTS },
+      let cachedComments = readCommentsCacheByPostId({
+        proxy,
+        postId: params.postId,
       });
 
       if (!cachedComments) {
@@ -41,10 +41,11 @@ const CommentForm = (params) => {
           ...(cachedComments?.getComments?.edges || []),
         ],
       };
-      proxy.writeQuery({
-        query: FETCH_COMMENTS_QUERY,
-        data: allComments,
-        variables: { postId: params.postId, first: PAGINATION_LIMIT.COMMENTS },
+
+      writeCommentsCacheByPostId({
+        proxy,
+        postId: params.postId,
+        updatedComments: allComments,
       });
 
       // ----------------------- update comments count in post query cache -----------------------

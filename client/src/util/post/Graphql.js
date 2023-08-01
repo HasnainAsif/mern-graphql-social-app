@@ -1,13 +1,22 @@
 import { gql } from '@apollo/client';
 
-export const LIKES_FRAGMENT = gql`
-  fragment likes on Likes {
+export const LIKE_FRAGMENT = gql`
+  fragment likes on Post {
     likes {
       id
       username
       createdAt
     }
     likeCount
+  }
+`;
+export const COMMENT_FRAGMENT = gql`
+  fragment comment on Comment {
+    id
+    body
+    username
+    createdAt
+    postId
   }
 `;
 
@@ -55,11 +64,7 @@ export const FETCH_COMMENTS_QUERY = gql`
     ) {
       edges {
         node {
-          id
-          body
-          postId
-          username
-          createdAt
+          ...comment
         }
         cursor
       }
@@ -69,4 +74,5 @@ export const FETCH_COMMENTS_QUERY = gql`
       }
     }
   }
+  ${COMMENT_FRAGMENT}
 `;

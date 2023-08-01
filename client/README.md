@@ -95,6 +95,8 @@ fetchMore
 refetch
 networkStatus --> will change based on initial_loading/fetchMore/refetch/error/data etc
 
+Update Cache using readQuery/writeQuery/readFragment/writeFragment
+
 Cursor Pagination
 Offset Pagination
 
@@ -104,6 +106,14 @@ Custom Hook:
 useForm
 usePagination
 
+### POSTS FEATURES
+
+fetchPolicy: 'cache-and-network'
+
+### POST DETAIL FEATURES
+
+fetchPolicy: 'cache-first'
+
 ### COMMENTS FEATURES
 
 Fetch Comments
@@ -111,6 +121,8 @@ Create comment and update cache to show updated comments and updated comment cou
 Delete comment and update cache to show updated comments and updated comment count
 Cursor based Pagination on comments
 Refetch Comments functionality to fetch latest comments
+Caching
+fetchPolicy: 'network-only'
 
 ### LIKES FEATURES
 

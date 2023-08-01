@@ -15,18 +15,19 @@ import { AuthProvider } from './util/context/auth';
 import AuthLayout from './components/AuthLayout';
 import SinglePost from './pages/SinglePost';
 
-// TODO: update like instantly, even internet is closed
+// TODO: update like-unlike instantly, even internet is closed (Optimistic Response) -- DONE
 // TODO: Fragment for posts/post or like/comment -- DONE
-// TODO: add table pagination of posts
-// TODO: add cursor pagination of comments -- In Progress.
-// TODO: Functionality to fetch all comments
-// TODO: add load more pagination on comments
+// TODO: add table pagination of posts -- DONE
+// TODO: add cursor pagination of comments -- DONE.
+// TODO: Functionality to fetch all comments -- DONE
+// TODO: add load more pagination on comments -- DONE
+// TODO: refetch functionality (to get updated comments) -- DONE
+// TODO: Refetch comments option, if another user made comment -- DONE
+// TODO: Add admin role
+// TODO: readFragments/writeFragments for comments edit functionality
 // TODO: add Sorting (Most liked First, Most Commented First)
 // TODO: add Filtering by user, liked/unliked, commented/uncommented -- multi select
-// TODO: Add admin role
-// TODO: refetch functionality (to get updated comments and likes)
 // TODO: If token is expired, redirect to login page or add refreshed token.
-// TODO: Refetch comments option, if another user made comment
 
 function App() {
   return (

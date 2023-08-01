@@ -60,7 +60,7 @@ export const useTablePagination = ({
       return;
     }
 
-    // Type = 'frontend'
+    // type = 'frontend'
     const from = pageNo * itemsPerScreen - itemsPerScreen;
     const to = itemsPerScreen * pageNo;
     setPaginatedData(data?.slice(from, to));

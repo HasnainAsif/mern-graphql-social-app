@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Button, Form } from 'semantic-ui-react';
 import { FETCH_POSTS_QUERY, POST_FRAGMENT } from '../util/post/Graphql';
 import { useForm } from '../util/hooks';
+import { PAGINATION_LIMIT } from '../util/Constants';
 
 const PostForm = () => {
   const [errors, setErrors] = useState({});
@@ -16,15 +17,32 @@ const PostForm = () => {
     update(proxy, { data: { createPost: postData } }) {
       const cachedPosts = proxy.readQuery({
         query: FETCH_POSTS_QUERY,
-        // variables: { // Provide any required variables here.  Variables of mismatched types will return `null`.
-        //   id: 5,
-        // },
+        variables: {
+          limit: PAGINATION_LIMIT.POSTS,
+          offset: 0,
+        },
       });
+
       const allPosts = {};
-      allPosts.getPosts = [postData, ...(cachedPosts.getPosts || [])];
+      allPosts.getPosts = {};
+
+      if (cachedPosts?.getPosts?.posts) {
+        // if no post is available, cachedPosts will be null
+        allPosts.getPosts.posts = [postData, ...cachedPosts.getPosts.posts];
+        allPosts.getPosts.totalPosts = cachedPosts.getPosts.totalPosts + 1;
+      } else {
+        allPosts.getPosts.posts = [postData];
+        allPosts.getPosts.totalPosts = 1;
+      }
+
+      // add totalPosts also
       proxy.writeQuery({
         query: FETCH_POSTS_QUERY,
         data: allPosts,
+        variables: {
+          limit: PAGINATION_LIMIT.POSTS,
+          offset: 0,
+        },
       });
 
       setErrors({});

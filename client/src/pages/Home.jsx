@@ -24,6 +24,7 @@ const Home = () => {
       limit: PAGINATION_LIMIT.POSTS,
       offset: 0,
     },
+    fetchPolicy: 'cache-and-network', // first get data from cache and then replace data with network response if response is different from cache
   });
   const { posts, totalPosts } = getPosts;
 
@@ -50,7 +51,7 @@ const Home = () => {
           </Grid.Row>
         )}
         <Grid.Row>
-          {loading ? (
+          {!posts ? (
             <h1>Loading...</h1>
           ) : (
             <Transition.Group duration={200}>

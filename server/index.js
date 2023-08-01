@@ -5,8 +5,6 @@ const { MONGODB } = require('./config');
 const typeDefs = require('./graphql/typeDefs');
 const resolvers = require('./graphql/resolvers');
 
-// TODO: Refresh token
-// TODO: Admin Role
 const server = new ApolloServer({
   typeDefs,
   resolvers,
