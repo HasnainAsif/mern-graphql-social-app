@@ -2,6 +2,7 @@ const {
   UserInputError,
   AuthenticationError,
   ApolloError,
+  ForbiddenError,
 } = require('apollo-server');
 const { Post, Comment } = require('../../models/Post');
 const authMiddleware = require('../../utils/authMiddleware');
@@ -10,6 +11,8 @@ const {
   validateCommentInput,
 } = require('../../utils/validators');
 const { default: mongoose } = require('mongoose');
+const { combineResolvers } = require('graphql-resolvers');
+const { isAuthenticated } = require('../../utils/authMiddleware');
 
 const resolvers = {
   Query: {
@@ -87,24 +90,27 @@ const resolvers = {
     },
   },
   Mutation: {
-    createPost: async (parent, { body }, context) => {
-      const { id, username } = authMiddleware(context);
+    createPost: combineResolvers(
+      isAuthenticated,
+      async (parent, { body }, { me }) => {
+        const { id, username } = me;
 
-      const { valid, errors } = validatePostInput({ body });
-      if (!valid) {
-        throw new UserInputError(errors.message, { errors });
+        const { valid, errors } = validatePostInput({ body });
+        if (!valid) {
+          throw new UserInputError(errors.message, { errors });
+        }
+
+        const newPost = new Post({
+          body,
+          username,
+          createdAt: new Date().toISOString(),
+          user: id,
+        });
+
+        const savedPost = await newPost.save();
+        return savedPost;
       }
-
-      const newPost = new Post({
-        body,
-        username,
-        createdAt: new Date().toISOString(),
-        user: id,
-      });
-
-      const savedPost = await newPost.save();
-      return savedPost;
-    },
+    ),
     deletePost: async (parent, { postId }, context) => {
       const { id: userId, username } = authMiddleware(context);
 
@@ -131,13 +137,12 @@ const resolvers = {
         if (post.comments?.length > 0) {
           await Comment.deleteMany({ postId }); // delete all comments where postId matches
         }
-        // await Post.deleteOne({ _id: postId });
 
         await post.delete();
 
         session.commitTransaction();
 
-        return 'Post deleted successfully';
+        return true;
       } catch (error) {
         session.abortTransaction();
         throw new ApolloError('Server Error');

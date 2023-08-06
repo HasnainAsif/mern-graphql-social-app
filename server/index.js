@@ -4,11 +4,18 @@ const { MONGODB } = require('./config');
 
 const typeDefs = require('./graphql/typeDefs');
 const resolvers = require('./graphql/resolvers');
+const authMiddleware = require('./utils/authMiddleware');
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ req }) => ({ req }),
+  context: ({ req }) => {
+    const me = authMiddleware();
+    return {
+      me,
+      req,
+    };
+  },
 });
 
 mongoose
