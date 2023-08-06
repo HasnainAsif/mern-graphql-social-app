@@ -4,18 +4,24 @@ const { MONGODB } = require('./config');
 
 const typeDefs = require('./graphql/typeDefs');
 const resolvers = require('./graphql/resolvers');
-const authMiddleware = require('./utils/authMiddleware');
+const { authMiddleware } = require('./utils/authMiddleware');
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ req }) => {
-    const me = authMiddleware();
+  context: (context) => {
+    const me = authMiddleware(context);
+
     return {
       me,
-      req,
+      context,
     };
   },
+  // formatError: (err) => {
+  //   if (err.extensions?.code === 'UNAUTHORIZED') {
+  //     return new Error('Authentication required.');
+  //   }
+  // },
 });
 
 mongoose

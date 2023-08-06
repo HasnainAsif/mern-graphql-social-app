@@ -2,17 +2,19 @@ const {
   UserInputError,
   AuthenticationError,
   ApolloError,
-  ForbiddenError,
 } = require('apollo-server');
 const { Post, Comment } = require('../../models/Post');
-const authMiddleware = require('../../utils/authMiddleware');
 const {
   validatePostInput,
   validateCommentInput,
 } = require('../../utils/validators');
 const { default: mongoose } = require('mongoose');
 const { combineResolvers } = require('graphql-resolvers');
-const { isAuthenticated } = require('../../utils/authMiddleware');
+const {
+  isAuthenticated,
+  isPostOwner,
+  isCommentOwner,
+} = require('../../utils/authMiddleware');
 
 const resolvers = {
   Query: {
@@ -111,174 +113,141 @@ const resolvers = {
         return savedPost;
       }
     ),
-    deletePost: async (parent, { postId }, context) => {
-      const { id: userId, username } = authMiddleware(context);
+    deletePost: combineResolvers(
+      isAuthenticated,
+      isPostOwner,
+      async (parent, { postId }, context) => {
+        const session = await mongoose.startSession();
+        try {
+          const post = await Post.findById(postId);
 
-      const post = await Post.findById(postId).catch((error) => {
-        if (error.message.indexOf('Cast to ObjectId failed') !== -1) {
-          error = 'Post not found';
+          session.startTransaction();
+
+          if (post.comments?.length > 0) {
+            await Comment.deleteMany({ postId }); // delete all comments where postId matches
+          }
+
+          await post.delete();
+
+          session.commitTransaction();
+
+          return true;
+        } catch (error) {
+          session.abortTransaction();
+          throw new ApolloError('Server Error');
         }
-        throw new UserInputError('Post not found');
-      });
-
-      if (!post) {
-        throw new UserInputError('Post not found');
       }
+    ),
+    createComment: combineResolvers(
+      isAuthenticated,
+      async (parent, { postId, body }, { me }) => {
+        const { username, id } = me;
 
-      if (post.user.toString() !== userId) {
-        // throw new AuthenticationError('Cannot delete Post. Access Denied.');
-        throw new AuthenticationError('Action not allowed');
-      }
-
-      const session = await mongoose.startSession();
-      try {
-        session.startTransaction();
-
-        if (post.comments?.length > 0) {
-          await Comment.deleteMany({ postId }); // delete all comments where postId matches
+        const { valid, errors } = validateCommentInput({ body });
+        if (!valid) {
+          throw new UserInputError('Errors', { errors });
         }
 
-        await post.delete();
-
-        session.commitTransaction();
-
-        return true;
-      } catch (error) {
-        session.abortTransaction();
-        throw new ApolloError('Server Error');
-      }
-    },
-    createComment: async (parent, { postId, body }, context) => {
-      const { username, id } = authMiddleware(context);
-
-      const { valid, errors } = validateCommentInput({ body });
-      if (!valid) {
-        throw new UserInputError('Errors', { errors });
-      }
-
-      const post = await Post.findById(postId).catch((error) => {
-        if (error.message.indexOf('Cast to ObjectId failed') !== -1) {
-          error = 'Post not found';
-        }
-        throw new UserInputError(error);
-      });
-
-      if (!post) {
-        throw new UserInputError('Post not found');
-      }
-
-      const session = await mongoose.startSession();
-      try {
-        session.startTransaction();
-
-        const comment = await Comment.create({
-          postId,
-          body,
-          username,
-          user: id,
-          createdAt: new Date().toISOString(),
+        const post = await Post.findById(postId).catch((error) => {
+          if (error.message.indexOf('Cast to ObjectId failed') !== -1) {
+            error = 'Post not found';
+          }
+          throw new UserInputError(error);
         });
 
-        post.comments.unshift(comment.id); // Add comment to comment document
-        await post.save(); // Add comment reference to post document
-
-        session.commitTransaction();
-
-        return { node: comment, cursor: comment.createdAt };
-      } catch (error) {
-        session.abortTransaction();
-        throw new ApolloError('Server Error');
-      }
-    },
-    deleteComment: async (parent, { postId, commentId }, context) => {
-      const { id: userId } = authMiddleware(context);
-
-      const post = await Post.findById(postId).catch((error) => {
-        if (error.message.indexOf('Cast to ObjectId failed') !== -1) {
-          error = 'Post not found';
+        if (!post) {
+          throw new UserInputError('Post not found');
         }
-        throw new UserInputError(error);
-      });
-      if (!post) {
-        throw new UserInputError('Post not found');
-      }
-      const comment = await Comment.findById(commentId).catch((error) => {
-        if (error.message.indexOf('Cast to ObjectId failed') !== -1) {
-          error = 'Comment not found';
+
+        const session = await mongoose.startSession();
+        try {
+          session.startTransaction();
+
+          const comment = await Comment.create({
+            postId,
+            body,
+            username,
+            user: id,
+            createdAt: new Date().toISOString(),
+          });
+
+          post.comments.unshift(comment.id); // Add comment to comment document
+          await post.save(); // Add comment reference to post document
+
+          session.commitTransaction();
+
+          return { node: comment, cursor: comment.createdAt };
+        } catch (error) {
+          session.abortTransaction();
+          throw new ApolloError('Server Error');
         }
-        throw new UserInputError(error);
-      });
-      if (!comment) {
-        throw new UserInputError('Comment not found');
       }
+    ),
+    deleteComment: combineResolvers(
+      isAuthenticated,
+      isCommentOwner,
+      async (parent, { postId, commentId }, context) => {
+        const session = await mongoose.startSession();
+        try {
+          const post = await Post.findById(postId);
+          const commentIdx = post.comments.findIndex(
+            (comment) => comment.id === commentId
+          );
 
-      const commentIdx = post.comments.findIndex(
-        (comment) => comment.id === commentId
-      );
+          session.startTransaction();
 
-      const postComment = post.comments[commentIdx];
+          await Comment.delete({ id: commentId }); // delete comment from comment document
+          await post.comments.splice(commentIdx, 1);
+          await post.save(); // delete comment reference from post document
 
-      if (postComment === -1) {
-        throw new UserInputError('Comment not found');
+          session.commitTransaction();
+
+          return post;
+        } catch (error) {
+          session.abortTransaction();
+          throw new ApolloError('Server Error');
+        }
       }
+    ),
+    likeUnlikePost: combineResolvers(
+      isAuthenticated,
+      async (parent, { postId }, { me }) => {
+        const { id, username } = me;
 
-      if (comment.user.toString() !== userId) {
-        // throw new AuthenticationError('Cannot delete Post. Access Denied.');
-        throw new AuthenticationError('Action not allowed');
-      }
+        const post = await Post.findById(postId).catch((error) => {
+          if (error.message.indexOf('Cast to ObjectId failed') !== -1) {
+            error = 'Post not found';
+          }
+          throw new UserInputError('Post not found');
+        });
 
-      const session = await mongoose.startSession();
-      try {
-        session.startTransaction();
+        if (!post) {
+          throw new UserInputError('Post not found');
+        }
 
-        await comment.delete(); // delete comment from comment document
-        await post.comments.splice(commentIdx, 1);
-        await post.save(); // delete comment reference from post document
+        //
+        const likeIdx = post.likes.findIndex(
+          (like) => like.username === username
+        );
 
-        session.commitTransaction();
+        if (likeIdx === -1) {
+          // Post not liked yet, like post
+          //like post
+          post.likes.push({
+            username,
+            createdAt: new Date().toISOString(),
+          });
+        } else {
+          // post already liked, unlike post
+          // const like = post.likes[likeIdx];
+          // post.likes.splice(likeIdx, 1);
+          post.likes = post.likes.filter((like) => like.username !== username);
+        }
 
+        await post.save();
         return post;
-      } catch (error) {
-        session.abortTransaction();
-        throw new ApolloError('Server Error');
       }
-    },
-    likeUnlikePost: async (parent, { postId }, context) => {
-      const { id, username } = authMiddleware(context);
-
-      const post = await Post.findById(postId).catch((error) => {
-        if (error.message.indexOf('Cast to ObjectId failed') !== -1) {
-          error = 'Post not found';
-        }
-        throw new UserInputError('Post not found');
-      });
-
-      if (!post) {
-        throw new UserInputError('Post not found');
-      }
-
-      //
-      const likeIdx = post.likes.findIndex(
-        (like) => like.username === username
-      );
-
-      if (likeIdx === -1) {
-        // Post not liked yet, like post
-        //like post
-        post.likes.push({
-          username,
-          createdAt: new Date().toISOString(),
-        });
-      } else {
-        // post already liked, unlike post
-        // const like = post.likes[likeIdx];
-        // post.likes.splice(likeIdx, 1);
-        post.likes = post.likes.filter((like) => like.username !== username);
-      }
-
-      await post.save();
-      return post;
-    },
+    ),
   },
 };
 

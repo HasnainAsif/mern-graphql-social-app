@@ -42,12 +42,18 @@ const typeDefs = gql`
     createdAt: String!
   }
 
+  enum Role {
+    admin
+    user
+  }
+
   type User {
     id: ID!
     username: String!
     email: String!
     token: String!
     createdAt: String!
+    role: Role!
   }
 
   input RegisterInput {

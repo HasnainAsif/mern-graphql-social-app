@@ -5,6 +5,11 @@ const userSchema = new Schema({
   password: String,
   email: String,
   createdAt: String, // default value will be set in graphql
+  role: {
+    type: String,
+    enum: ['admin', 'user'],
+    default: 'user',
+  },
 });
 
 module.exports = model('User', userSchema);
