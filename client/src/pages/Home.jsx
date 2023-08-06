@@ -51,8 +51,10 @@ const Home = () => {
           </Grid.Row>
         )}
         <Grid.Row>
-          {!posts ? (
+          {loading && !posts ? (
             <h1>Loading...</h1>
+          ) : !loading && !posts ? (
+            <h1>No Post Found...</h1>
           ) : (
             <Transition.Group duration={200}>
               {paginatedData.map((post) => (

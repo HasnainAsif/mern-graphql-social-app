@@ -108,6 +108,7 @@ usePagination
 
 ### POSTS FEATURES
 
+Offset Based pagination
 fetchPolicy: 'cache-and-network'
 
 ### POST DETAIL FEATURES

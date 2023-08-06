@@ -60,14 +60,6 @@ const AuthProvider = ({ children, ...rest }) => {
     dispatch({ type: 'LOGOUT' });
   }
 
-  // const value = useMemo(
-  //   () => ({
-  //     user: state.user,
-  //     login,
-  //     logout,
-  //   }),
-  //   [state.user]
-  // );
   const value = {
     user: state.user,
     login,

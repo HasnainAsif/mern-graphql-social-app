@@ -23,6 +23,7 @@ import SinglePost from './pages/SinglePost';
 // TODO: add load more pagination on comments -- DONE
 // TODO: refetch functionality (to get updated comments) -- DONE
 // TODO: Refetch comments option, if another user made comment -- DONE
+// TODO: update ApolloProvider
 // TODO: Add admin role
 // TODO: readFragments/writeFragments for comments edit functionality
 // TODO: add Sorting (Most liked First, Most Commented First)

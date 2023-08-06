@@ -76,18 +76,14 @@ const Comments = ({ postId: id }) => {
               Refetch Comments
             </Button>
           ) : (
-            <Button
-              color='facebook'
-              floated='right'
-              onClick={handleFetchComments}
-            >
-              Fetch Comments
+            <Button color='blue' floated='right' onClick={handleFetchComments}>
+              Load Comments
             </Button>
           )}
         </div>
       </div>
 
-      {loading && <div>'Loading...'</div>}
+      {networkStatus === NetworkStatus.loading && <div>'Loading...'</div>}
       {networkStatus === NetworkStatus.refetch && <div>'Refetching!'</div>}
       {networkStatus === NetworkStatus.fetchMore && (
         <div> 'Fetching More!'</div>

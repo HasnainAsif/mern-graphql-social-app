@@ -1,9 +1,7 @@
 import { gql, useMutation } from '@apollo/client';
 import React, { Fragment, useState } from 'react';
 import { Button, Confirm, Icon } from 'semantic-ui-react';
-import { FETCH_COMMENTS_QUERY, FETCH_POSTS_QUERY } from '../util/post/Graphql';
 import MyPopup from './MyPopup';
-import { PAGINATION_LIMIT } from '../util/Constants';
 import {
   readCommentsCacheByPostId,
   writeCommentsCacheByPostId,
