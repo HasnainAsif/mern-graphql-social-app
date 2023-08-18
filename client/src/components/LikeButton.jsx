@@ -50,7 +50,7 @@ const LikeButton = ({ post: { id: postId, likeCount, likes = [] } = {} }) => {
         console.log('LIKE-UNLIKE SUCCESSFUL');
       },
     }
-    // No need to update cache, because updated likes and likesCount are returned from query(it will automatically update cache)
+    // No need to update cache, because updated likes and likesCount are returned from mutation(it will automatically update cache)
   );
 
   useEffect(() => {

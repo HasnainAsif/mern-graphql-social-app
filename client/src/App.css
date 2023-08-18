@@ -116,6 +116,12 @@ p {
   padding: 3rem 2rem 2rem 4rem;
 }
 
+.post-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .img_pod {
   height: 68px;
   width: 68px;

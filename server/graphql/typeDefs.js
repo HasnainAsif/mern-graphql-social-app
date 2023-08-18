@@ -10,6 +10,7 @@ const typeDefs = gql`
     likes: [Like]! # ! means likes will be an array and will have zero or more items.
     likeCount: Int!
     commentCount: Int!
+    allowComments: Boolean!
   }
   type GetPosts {
     posts: [Post]
@@ -83,6 +84,8 @@ const typeDefs = gql`
     createComment(postId: ID!, body: String!): CommentEdge!
     deleteComment(postId: ID!, commentId: ID!): Post!
     likeUnlikePost(postId: ID!): Post!
+
+    allowUnallowComments(postId: ID!): Post!
   }
 
   # type Subscription {

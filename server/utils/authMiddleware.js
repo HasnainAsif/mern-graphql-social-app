@@ -89,6 +89,8 @@ const isCommentOwner = async (parent, { postId, commentId }, { me }) => {
   }
 };
 
+// isAdminOrPostOwner
+
 module.exports = {
   authMiddleware,
   isAuthenticated,

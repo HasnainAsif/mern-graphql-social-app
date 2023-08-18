@@ -2,6 +2,7 @@ const {
   UserInputError,
   AuthenticationError,
   ApolloError,
+  ForbiddenError,
 } = require('apollo-server');
 const { Post, Comment } = require('../../models/Post');
 const {
@@ -14,6 +15,7 @@ const {
   isAuthenticated,
   isPostOwner,
   isCommentOwner,
+  isAdmin,
 } = require('../../utils/authMiddleware');
 
 const resolvers = {
@@ -159,6 +161,10 @@ const resolvers = {
           throw new UserInputError('Post not found');
         }
 
+        if (!post.allowComments) {
+          throw new ForbiddenError('Comments not allowed');
+        }
+
         const session = await mongoose.startSession();
         try {
           session.startTransaction();
@@ -243,6 +249,26 @@ const resolvers = {
           // post.likes.splice(likeIdx, 1);
           post.likes = post.likes.filter((like) => like.username !== username);
         }
+
+        await post.save();
+        return post;
+      }
+    ),
+    allowUnallowComments: combineResolvers(
+      isAdmin,
+      async (parent, { postId }, context) => {
+        const post = await Post.findById(postId).catch((error) => {
+          if (error.message.indexOf('Cast to ObjectId failed') !== -1) {
+            error = 'Post not found';
+          }
+          throw new UserInputError('Post not found');
+        });
+
+        if (!post) {
+          throw new UserInputError('Post not found');
+        }
+
+        post.allowComments = !post.allowComments;
 
         await post.save();
         return post;

@@ -1,12 +1,13 @@
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
-import { Button, Card, Icon, Image, Label } from 'semantic-ui-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Button } from 'semantic-ui-react';
 import moment from 'moment';
 import LikeButton from './LikeButton';
 import { AuthContext } from '../util/context/auth';
 import DeleteButton from './DeleteButton';
-import MyPopup from './MyPopup';
 import CommentButton from './CommentButton';
+import { gql, useMutation } from '@apollo/client';
+import { POST_FRAGMENT } from '../util/post/Graphql';
 
 const PostCard = ({
   post: {
@@ -16,16 +17,18 @@ const PostCard = ({
     createdAt,
     likeCount,
     commentCount,
-    // comments,
     likes,
+    allowComments,
   },
   deletePostCallback,
 }) => {
   const { user } = useContext(AuthContext);
+  const location = useLocation();
 
-  // const commentOnPost = () => {
-  //   console.log("Comment On post");
-  // };
+  const [allowUnallowComments, { loading, data }] = useMutation(
+    ALLOW_UNALLOW_COMMENTS_MUTATION,
+    { variables: { postId: id } }
+  ); // No need to update cache, because mutation is returning updated post which contains updated value of allowComments field
 
   return (
     <div className='post-card'>
@@ -36,11 +39,26 @@ const PostCard = ({
         />
       </div>
       <div className='container_copy'>
-        <h3>{moment(createdAt).fromNow(true)} ago</h3>
-        <h2>{username}</h2>
-        <Link to={`/posts/${id}`}>
-          <p>{body}</p>
-        </Link>
+        <div className='post-detail'>
+          <div>
+            <h3>{moment(createdAt).fromNow(true)} ago</h3>
+            <h2>{username}</h2>
+            <Link to={`/posts/${id}`}>
+              <p>{body}</p>
+            </Link>
+          </div>
+          {location.pathname.includes('/posts/') && user?.role === 'admin' && (
+            <div>
+              <Button
+                color={allowComments ? 'red' : 'teal'}
+                size='large'
+                onClick={allowUnallowComments}
+              >
+                {allowComments ? 'Block Comments' : 'Allow Comments'}
+              </Button>
+            </div>
+          )}
+        </div>
 
         <div className='card-actions'>
           <div>
@@ -57,3 +75,12 @@ const PostCard = ({
 };
 
 export default PostCard;
+
+const ALLOW_UNALLOW_COMMENTS_MUTATION = gql`
+  mutation allowUnallowComments($postId: ID!) {
+    allowUnallowComments(postId: $postId) {
+      ...post
+    }
+  }
+  ${POST_FRAGMENT}
+`;

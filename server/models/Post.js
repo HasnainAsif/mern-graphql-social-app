@@ -20,6 +20,10 @@ const postSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'users',
   },
+  allowComments: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const commentSchema = new Schema({

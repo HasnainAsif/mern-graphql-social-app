@@ -33,6 +33,7 @@ export const POST_FRAGMENT = gql`
     }
     likeCount
     commentCount
+    allowComments
   }
 `;
 

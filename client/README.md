@@ -130,3 +130,7 @@ skip query if condition not met
 
 Like/Unlike Post
 Optimistic Response // updates UI Without waiting for response from request. After request completion, UI will update again.
+
+### Admin Features
+
+Admin can block/unblock comments of any post

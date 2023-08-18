@@ -87,6 +87,7 @@ const LOGIN_USER = gql`
       id
       username
       email
+      role
       token
       createdAt
     }

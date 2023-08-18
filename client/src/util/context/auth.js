@@ -6,7 +6,7 @@ const initialState = { user: null };
 const token = localStorage.getItem('jwtToken');
 if (token) {
   const decodedToken = jwtDecode(token);
-  const { id, username, email, exp, iat } = decodedToken;
+  const { id, username, email, role, exp, iat } = decodedToken;
 
   if (exp * 1000 > Date.now()) {
     // Token Not expired yet
@@ -14,6 +14,7 @@ if (token) {
       email,
       id,
       username,
+      role,
       token,
     };
   } else {

@@ -44,7 +44,14 @@ const SinglePost = () => {
                 />
               )}
             </section>
-            {user && <CommentForm postId={params.postId} />}
+            {user && getPost?.allowComments && (
+              <CommentForm postId={params.postId} />
+            )}
+            {getPost && !getPost.allowComments && (
+              <div className='ui error message'>
+                Comments are blocked by admin...
+              </div>
+            )}
 
             <Comments {...{ commentCount, postId: params.postId }} />
           </Grid.Column>
