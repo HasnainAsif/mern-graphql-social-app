@@ -83,6 +83,7 @@ const typeDefs = gql`
     deletePost(postId: ID!): Boolean!
     createComment(postId: ID!, body: String!): CommentEdge!
     deleteComment(postId: ID!, commentId: ID!): Post!
+    editComment(postId: ID!, commentId: ID!, body: String!): Boolean
     likeUnlikePost(postId: ID!): Post!
 
     allowUnallowComments(postId: ID!): Post!

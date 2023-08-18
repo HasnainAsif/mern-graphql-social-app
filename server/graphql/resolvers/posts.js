@@ -191,15 +191,15 @@ const resolvers = {
     ),
     deleteComment: combineResolvers(
       isAuthenticated,
-      isCommentOwner,
+      isCommentOwner, // post and comment error checks are handled here
       async (parent, { postId, commentId }, context) => {
         const session = await mongoose.startSession();
-        try {
-          const post = await Post.findById(postId);
-          const commentIdx = post.comments.findIndex(
-            (comment) => comment.id === commentId
-          );
+        const post = await Post.findById(postId);
+        const commentIdx = post.comments.findIndex(
+          (comment) => comment.id === commentId
+        );
 
+        try {
           session.startTransaction();
 
           await Comment.delete({ id: commentId }); // delete comment from comment document
@@ -211,6 +211,26 @@ const resolvers = {
           return post;
         } catch (error) {
           session.abortTransaction();
+          throw new ApolloError('Server Error');
+        }
+      }
+    ),
+    editComment: combineResolvers(
+      isAuthenticated,
+      isCommentOwner, // post and comment error checks are handled here
+      async (parent, { postId, commentId, body }, context) => {
+        const post = await Post.findById(postId);
+
+        if (!post.allowComments) {
+          throw new ForbiddenError('Comments are restricted by admin');
+        }
+
+        try {
+          // Update comment body
+          await Comment.findOneAndUpdate({ _id: commentId }, { body });
+
+          return true;
+        } catch (error) {
           throw new ApolloError('Server Error');
         }
       }

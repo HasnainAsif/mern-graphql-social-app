@@ -68,9 +68,8 @@ const DeleteButton = ({ postId, commentId, callback }) => {
         <Button
           as='div'
           color='red'
-          floated='right'
           onClick={() => setConfirmOpen(true)}
-          style={{ margin: 0 }}
+          style={{ margin: 0, height: '100%' }}
         >
           <Icon name='trash' style={{ textAlign: 'end' }} />
         </Button>

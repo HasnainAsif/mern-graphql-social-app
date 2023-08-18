@@ -125,6 +125,7 @@ Refetch Comments functionality to fetch latest comments
 Caching
 fetchPolicy: 'network-only'
 skip query if condition not met
+Edit comment functionality and update cache using readFragments/writeFragments to show updated comments
 
 ### LIKES FEATURES
 

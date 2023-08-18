@@ -66,8 +66,9 @@ const isCommentOwner = async (parent, { postId, commentId }, { me }) => {
   if (!post) {
     throw new UserInputError('Post not found');
   }
+
   const commentIdx = post.comments.findIndex(
-    (comment) => comment.id === commentId
+    (comment) => comment.toString() === commentId
   );
 
   if (commentIdx === -1) {
@@ -80,11 +81,12 @@ const isCommentOwner = async (parent, { postId, commentId }, { me }) => {
     }
     throw new UserInputError(error);
   });
+
   if (!comment) {
     throw new UserInputError('Comment not found');
   }
 
-  if (comment.user.toString() !== userId) {
+  if (comment.user.toString() !== me.id) {
     throw new ForbiddenError('Not authenticated as owner');
   }
 };

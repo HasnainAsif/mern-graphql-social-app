@@ -184,6 +184,26 @@ img {
   align-items: center;
 }
 
+.comment-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.comment-content .header {
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+.comment-content .description {
+  margin-top: 8px;
+}
+.comment-content .actions {
+  display: flex;
+  height: 100%;
+  gap: 4px;
+}
+
 /* Post Form */
 .create-post-section {
   display: flex;

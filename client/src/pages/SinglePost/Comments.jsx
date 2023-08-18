@@ -6,6 +6,7 @@ import moment from 'moment';
 import { PAGINATION_LIMIT } from '../../util/Constants';
 import { NetworkStatus, useQuery } from '@apollo/client';
 import { FETCH_COMMENTS_QUERY } from '../../util/post/Graphql';
+import EditButton from '../../components/EditButton';
 
 const Comments = ({ postId: id }) => {
   const { user } = useContext(AuthContext);
@@ -83,21 +84,32 @@ const Comments = ({ postId: id }) => {
         </div>
       </div>
 
-      {networkStatus === NetworkStatus.loading && <div>'Loading...'</div>}
-      {networkStatus === NetworkStatus.refetch && <div>'Refetching!'</div>}
-      {networkStatus === NetworkStatus.fetchMore && (
-        <div> 'Fetching More!'</div>
-      )}
+      {networkStatus === NetworkStatus.loading && <div>Loading...</div>}
+      {networkStatus === NetworkStatus.refetch && <div>Refetching!</div>}
+      {networkStatus === NetworkStatus.fetchMore && <div> Fetching More!</div>}
 
       {edges?.map(({ node }) => (
         <Card fluid key={node.id}>
           <Card.Content>
-            {user && user.username === node.username && (
-              <DeleteButton postId={id} commentId={node.id} />
-            )}
-            <Card.Header>{node.username}</Card.Header>
-            <Card.Meta>{moment(node.createdAt).fromNow()}</Card.Meta>
-            <Card.Description>{node.body}</Card.Description>
+            <div className='comment-content'>
+              <div>
+                <Card.Header>{node.username}</Card.Header>
+                <Card.Meta>{moment(node.createdAt).fromNow()}</Card.Meta>
+                <Card.Description>{node.body}</Card.Description>
+              </div>
+              <div className='actions'>
+                {user && user.username === node.username && (
+                  <EditButton
+                    postId={id}
+                    commentId={node.id}
+                    commentMsg={node.body}
+                  />
+                )}
+                {user && user.username === node.username && (
+                  <DeleteButton postId={id} commentId={node.id} />
+                )}
+              </div>
+            </div>
           </Card.Content>
         </Card>
       ))}
