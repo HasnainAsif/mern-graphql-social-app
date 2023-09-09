@@ -21,7 +21,7 @@ export const useForm = (callback, initialState = {}) => {
   };
 };
 
-export const useTablePagination = ({
+export const usePagination = ({
   data = [],
   itemsPerScreen = ITEMS_PER_SCREEN,
   totalNoOfData,

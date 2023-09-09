@@ -6,7 +6,6 @@ const typeDefs = gql`
     body: String!
     username: String!
     createdAt: String!
-    # comments: [Comment]!
     likes: [Like]! # ! means likes will be an array and will have zero or more items.
     likeCount: Int!
     commentCount: Int!
@@ -43,42 +42,19 @@ const typeDefs = gql`
     createdAt: String!
   }
 
-  enum Role {
-    admin
-    user
-  }
-
-  type User {
-    id: ID!
-    username: String!
-    email: String!
-    token: String!
-    createdAt: String!
-    role: Role!
-  }
-
-  input RegisterInput {
-    username: String!
-    email: String!
-    password: String!
-    confirmPassword: String!
-  }
   input GetCommentsArgs {
     postId: String!
     first: Int
     after: String
   }
 
-  type Query {
+  extend type Query {
     getPosts(limit: Int, offset: Int): GetPosts!
     getPost(postId: ID!): Post!
     getComments(commentsArgs: GetCommentsArgs): GetComments!
   }
 
-  type Mutation {
-    register(registerInput: RegisterInput): User!
-    login(username: String!, password: String!): User!
-
+  extend type Mutation {
     createPost(body: String!): Post!
     deletePost(postId: ID!): Boolean!
     createComment(postId: ID!, body: String!): CommentEdge!
@@ -88,10 +64,6 @@ const typeDefs = gql`
 
     allowUnallowComments(postId: ID!): Post!
   }
-
-  # type Subscription {
-  #   newPost: Post!
-  # }
 `;
 
 module.exports = typeDefs;

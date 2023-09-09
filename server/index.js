@@ -2,7 +2,7 @@ const { ApolloServer } = require('apollo-server');
 const mongoose = require('mongoose');
 const { MONGODB } = require('./config');
 
-const typeDefs = require('./graphql/typeDefs');
+const typeDefs = require('./graphql/Schema');
 const resolvers = require('./graphql/resolvers');
 const { authMiddleware } = require('./utils/authMiddleware');
 
@@ -17,10 +17,16 @@ const server = new ApolloServer({
       context,
     };
   },
-  // formatError: (err) => {
-  //   if (err.extensions?.code === 'UNAUTHORIZED') {
-  //     return new Error('Authentication required.');
-  //   }
+  // formatError: error => {
+  //   // remove the internal error message
+  //   // leave only the important validation error
+  //   const message = error.message
+  //     .replace('Validation error: ', '');
+
+  //   return {
+  //     ...error,
+  //     message,
+  //   };
   // },
 });
 

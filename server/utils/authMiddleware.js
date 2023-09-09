@@ -14,8 +14,6 @@ const authMiddleware = (context) => {
 
   if (!token) {
     return null;
-    //   throw new Error('Authentication Denied')
-    // throw new AuthenticationError('Authorization Header must be provided');
   }
 
   try {
@@ -24,7 +22,6 @@ const authMiddleware = (context) => {
     return decodedUser; // { id, email, username }
   } catch (error) {
     return null;
-    // throw new AuthenticationError('Invalid/Expired Token'); // Your session expired. Sign in again
   }
 };
 

@@ -7,7 +7,7 @@ import { AuthContext } from '../util/context/auth';
 import { FETCH_POSTS_QUERY } from '../util/post/Graphql';
 import React from 'react';
 import { Icon, Pagination } from 'semantic-ui-react';
-import { useTablePagination } from '../util/hooks';
+import { usePagination } from '../util/hooks';
 import { PAGINATION_LIMIT } from '../util/Constants';
 // import { client } from '../../ApolloProvider';
 
@@ -29,7 +29,7 @@ const Home = () => {
   const { posts, totalPosts } = getPosts;
 
   const { handleChangePageNo, paginatedData, pageNo, pagesCount } =
-    useTablePagination({
+    usePagination({
       data: posts,
       totalNoOfData: totalPosts,
       type: 'backend',
