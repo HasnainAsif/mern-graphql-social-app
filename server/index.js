@@ -40,9 +40,4 @@ mongoose
     console.log(`Server running at ${res.url}`);
   });
 
-//// OR
-// server.listen(5000).then((res) => {
-//   console.log(res.url);
-// });
-
 // createpost, login is done
