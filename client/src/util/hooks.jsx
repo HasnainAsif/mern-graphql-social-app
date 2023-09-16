@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { PAGINATION_SIDE } from './Constants';
 
 const ITEMS_PER_SCREEN = 5;
 
@@ -25,7 +26,7 @@ export const usePagination = ({
   data = [],
   itemsPerScreen = ITEMS_PER_SCREEN,
   totalNoOfData,
-  type = 'frontend',
+  type = PAGINATION_SIDE.FRONTEND,
 }) => {
   const [paginatedData, setPaginatedData] = useState(undefined);
   //Page No. e.g; 1 or 2 or 3 etc
@@ -55,12 +56,12 @@ export const usePagination = ({
 
   // Paginated Data
   useEffect(() => {
-    if (type === 'backend') {
+    if (type === PAGINATION_SIDE.BACKEND) {
       setPaginatedData(data);
       return;
     }
 
-    // type = 'frontend'
+    // type = PAGINATION_SIDE.FRONTEND
     const from = pageNo * itemsPerScreen - itemsPerScreen;
     const to = itemsPerScreen * pageNo;
     setPaginatedData(data?.slice(from, to));

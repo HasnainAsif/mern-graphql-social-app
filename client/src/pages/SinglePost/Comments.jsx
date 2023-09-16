@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import DeleteButton from '../../components/DeleteButton';
 import { Button, Card } from 'semantic-ui-react';
 import { AuthContext } from '../../util/context/auth';

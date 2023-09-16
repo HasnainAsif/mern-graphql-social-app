@@ -1,6 +1,12 @@
 import jwtDecode from 'jwt-decode';
 import React, { createContext, useReducer } from 'react';
 
+const AUTH_TYPE = {
+  LOGIN: 'LOGIN',
+  LOGOUT: 'LOGOUT',
+};
+const JWT_LOCALSTORAGE_KEY = 'jwtToken';
+
 const initialState = { user: null };
 
 const token = localStorage.getItem('jwtToken');
@@ -32,10 +38,10 @@ const AuthContext = createContext({
 
 const authReducer = (state = initialState, { type, payload }) => {
   switch (type) {
-    case 'LOGIN':
+    case AUTH_TYPE.LOGIN:
       return { ...state, user: payload };
 
-    case 'LOGOUT':
+    case AUTH_TYPE.LOGOUT:
       return { ...state, user: null };
 
     default:
@@ -47,18 +53,18 @@ const AuthProvider = ({ children, ...rest }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   function login(userData) {
-    localStorage.setItem('jwtToken', userData.token);
+    localStorage.setItem(JWT_LOCALSTORAGE_KEY, userData.token);
 
     dispatch({
-      type: 'LOGIN',
+      type: AUTH_TYPE.LOGIN,
       payload: userData,
     });
   }
 
   function logout() {
-    localStorage.removeItem('jwtToken');
+    localStorage.removeItem(JWT_LOCALSTORAGE_KEY);
 
-    dispatch({ type: 'LOGOUT' });
+    dispatch({ type: AUTH_TYPE.LOGOUT });
   }
 
   const value = {
@@ -71,11 +77,6 @@ const AuthProvider = ({ children, ...rest }) => {
     <AuthContext.Provider value={value} {...rest}>
       {children}
     </AuthContext.Provider>
-    // OR
-    // <AuthContext.Provider
-    //   value={{ user: state.user, login, logout }}
-    //   {...props}
-    // />
   );
 };
 
