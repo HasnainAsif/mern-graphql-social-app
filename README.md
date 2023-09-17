@@ -25,7 +25,7 @@ To get started with this project, follow these steps:
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/yourusername/mern-social-media-app.git
+   git clone https://github.com/HasnainAsif/mern-graphql-social-app.git
    ```
 
 2. Change directory to project directory
@@ -64,44 +64,44 @@ Before you begin, ensure you have met the following requirements:
 
 ## Application Features
 
-User registration and login
-Create and delete posts
-Like/unlike posts
-Create/Delete/Edit comments
-Admin functionality to allow/unallow comments creation on posts
-Offset based pagination in posts
-Cursor based pagination in comments
-optimisticResponse for liking/unliking post
-Caching for Posts, comments, likes
+- User registration and login
+- Create and delete posts
+- Like/unlike posts
+- Create/Delete/Edit comments
+- Admin functionality to allow/unallow comments creation on posts
+- Offset based pagination in posts
+- Cursor based pagination in comments
+- optimisticResponse for liking/unliking post
+- Caching for Posts, comments, likes
 
 ### POSTS FEATURES
 
-Offset Based pagination
-fetchPolicy is 'cache-and-network'
+- Offset Based pagination
+- fetchPolicy is 'cache-and-network'
 
 ### POST DETAIL FEATURES
 
-fetchPolicy is 'cache-first'
+- fetchPolicy is 'cache-first'
 
 ### COMMENTS FEATURES
 
-Fetch Comments
-Cursor based Pagination
-Refetch Comments functionality to fetch latest comments
-fetchPolicy is 'network-only'
-skip query if condition not met
-Create/Delete comment and update cache(using readQuery/writeQuery) to show updated comments and updated comment count
-Edit comment and update cache(using readFragment/writeFragment) to show updated comments
+- Fetch Comments
+- Cursor based Pagination
+- Refetch Comments functionality to fetch latest comments
+- fetchPolicy is 'network-only'
+- skip query if condition not met
+- Create/Delete comment and update cache(using readQuery/writeQuery) to show updated comments and updated comment count
+- Edit comment and update cache(using readFragment/writeFragment) to show updated comments
 
 ### LIKES FEATURES
 
-Like/Unlike Post
-Automatic caching to show updated likes count. No need to handle caching manually.
-Optimistic Response --> updates UI Without waiting for response from request. After request completion, UI states will update again.
+- Like/Unlike Post
+- Automatic caching to show updated likes count. No need to handle caching manually.
+- Optimistic Response --> updates UI Without waiting for response from request. After request completion, UI states will update again.
 
 ### Admin Features
 
-Admin can allow/unallow comments creation on any post. By default, comments are allowed.
+- Admin can allow/unallow comments creation on any post. By default, comments are allowed.
 
 ## Usage
 
@@ -111,46 +111,46 @@ To use this project, follow these steps:
 
 2. Create posts, like/unlike posts, and add comments.
 
-3. Login with admin(using username _admin_ and password _123456_) to allow/unallow comments creation
+3. Login with admin(using username **admin** and password **123456**) to allow/unallow comments creation
 
 ## Apollo Client Features
 
 ### Caching
 
-Caching for posts
-Caching for likes
-Caching for comments
+- Caching for posts
+- Caching for likes
+- Caching for comments
 
 ### useQuery Arguments
 
-notifyOnNetworkStatusChange
-fetchPolicy
-Skip
-optimisticResponse
+- notifyOnNetworkStatusChange
+- fetchPolicy
+- Skip
+- optimisticResponse
 
 ### useQuery Returned values
 
-Loading
-Data
-Error
-FetchMore
-Refetch
-NetworkStatus (changes based on loading, fetchMore, refetch, error, data)
+- Loading
+- Data
+- Error
+- FetchMore
+- Refetch
+- NetworkStatus (changes based on loading, fetchMore, refetch, error, data)
 
 ### Update Cache Functions
 
-Using readQuery, writeQuery, readFragment, writeFragment
+- Using readQuery, writeQuery, readFragment, writeFragment
 
 ## Apollo Server Features
 
 ### Role based access
 
-    Admin
-    User
+- Admin
+- User
 
 ### Middlewares
 
-For a post to check, if request is from post owner
-For a comment to check, if request is from comment owner
-If request is authenticated
-If request is from admin authenticated
+- For a post to check, if request is from post owner
+- For a comment to check, if request is from comment owner
+- If request is authenticated
+- If request is from admin authenticated
