@@ -1,0 +1,29 @@
+{
+  "name": "merng-social-media",
+  "version": "1.0.0",
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": "index.js",
+  "scripts": {
+    "server": "cd server && npm run dev",
+    "client": "cd client && npm start",
+    "iclient": "cd client && npm install",
+    "iserver": "cd server && npm install",
+    "ipkgs": "npm i && concurrently \"npm run iserver\" \"npm run iclient\"",
+    "seed-admin": "node server/utils/seeds.js",
+    "i-pkgss": "cd server && npm install && cd client && npm install",
+    "start": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HasnainAsif/MERNG-Social-Media.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HasnainAsif/MERNG-Social-Media/issues"
+  },
+  "homepage": "https://github.com/HasnainAsif/MERNG-Social-Media#readme",
+  "devDependencies": {
+    "concurrently": "^8.2.1"
+  }
+}

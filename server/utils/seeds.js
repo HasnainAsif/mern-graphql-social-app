@@ -25,6 +25,7 @@ async function createAdmin() {
 
     if (admin) {
       console.log('Admin user already exists');
+      mongoose.disconnect();
       return;
     }
 
