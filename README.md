@@ -59,6 +59,7 @@ Now your application should be up and running at http://localhost:3000.
 Before you begin, ensure you have met the following requirements:
 
 - **Node.js** should be installed in your system.
+- **Git** should be installed in your system.
 - **MongoDB** should be installed and running.
 - **VSCode** or any code editor of your choice.
 
